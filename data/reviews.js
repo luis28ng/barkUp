@@ -4,8 +4,6 @@ import { ObjectId } from 'mongodb';
 let exportedMethods = {
 
     async getAllReviewsByUser (id) {
-
-        id = id.trim();
         
         if (!id || id === null || id === undefined) {
             throw 'You must provide and id'
@@ -14,6 +12,8 @@ let exportedMethods = {
         if (typeof id !== 'string') {
             throw 'ID must be a string'
         };
+
+        id = id.trim();
         
         if (id.length === 0) {
             throw 'ID can not be an empty strings with just spaces'
@@ -25,34 +25,32 @@ let exportedMethods = {
 
         const reviewsCollection = await reviews();
 
-        const reviewArray = await reviewsCollection.findOne({_id: new ObjectId(id)}).toArray();
-
+        const reviewArray = await reviewsCollection.find({ userId: { $eq: new ObjectId(id) } }).toArray();
+        
         if (!reviewArray) {
             throw `Was not able to get the reviews for the user with ID: ${id}.`
         };
 
-        return reviewArray || [];
+        return reviewArray;
     },
 
     async createReview (userId, placeId, reviewTitle, rating, reviewDescription) {
-
-        reviewTitle = reviewTitle.trim();
-        reviewDescription = reviewDescription.trim();
-        userId = userId.trim();
-        placeId = placeId.trim();
 
         if (reviewTitle === null || reviewTitle === undefined ||
             rating === null || rating === undefined ||
             reviewDescription === null || reviewDescription === undefined) {
                 throw "All fields must be defined"
             };
+        
+        if (typeof reviewTitle !== 'string' || typeof reviewDescription !== 'string') {
+            throw "Inputs MUST be strings"
+        };
+
+        reviewTitle = reviewTitle.trim();
+        reviewDescription = reviewDescription.trim();
 
         if (reviewTitle === "" || reviewDescription === "") {
             throw "Inputs cannot be empty or empty strings with just spaces"
-        };
-
-        if (typeof reviewTitle !== 'string' || typeof reviewDescription !== 'string') {
-            throw "Inputs MUST be strings"
         };
 
         if (typeof rating !== 'number') {
@@ -71,6 +69,8 @@ let exportedMethods = {
             throw "User ID MUST be a string"
         };
 
+        userId = userId.trim();
+        
         if (userId.length === 0) {
             throw "You MUST provide a user ID"
         }
@@ -87,6 +87,8 @@ let exportedMethods = {
             throw "User ID MUST be a string"
         };
 
+        placeId = placeId.trim();
+
         if (placeId.length === 0) {
             throw "You MUST provide a user ID"
         }
@@ -99,11 +101,11 @@ let exportedMethods = {
         const reviewsCollection = await reviews();
 
         let reviewObject = {
-            userId,
-            placeId,
-            reviewTitle,
-            rating,
-            reviewDescription
+            userId: userId,
+            placeId: placeId,
+            reviewTitle: reviewTitle,
+            rating: rating,
+            reviewDescription: reviewDescription
         };
 
         const response = await reviewsCollection.insertOne(reviewObject);
@@ -121,8 +123,6 @@ let exportedMethods = {
     },
 
     async deleteReview (id) {
-
-        id = id.trim();
         
         if (!id || id === null || id === undefined) {
             throw 'You must provide and id'
@@ -132,6 +132,8 @@ let exportedMethods = {
             throw 'ID must be a string'
         };
         
+        id = id.trim();
+
         if (id.length === 0) {
             throw 'ID can not be an empty strings with just spaces'
         };
@@ -141,12 +143,6 @@ let exportedMethods = {
         };
 
         const reviewsCollection = await reviews();
-
-        const findReview = await reviewsCollection.findOne({_id: new ObjectId(id)});
-
-        if(findReview === null) {
-        throw `Review with ID: ${id} does not exist in the dataset.`
-        };
 
         const deleteReview = await reviewsCollection.findOneAndDelete({
             _id: new ObjectId(id),
@@ -163,21 +159,21 @@ let exportedMethods = {
 
     async updateReview (reviewId, reviewTitle, rating, reviewDescription) {
 
-        reviewTitle = reviewTitle.trim();
-        reviewDescription = reviewDescription.trim();
-
         if (reviewTitle === null || reviewTitle === undefined ||
             rating === null || rating === undefined ||
             reviewDescription === null || reviewDescription === undefined) {
                 throw "All fields must be defined"
             };
 
-        if (reviewTitle === "" || reviewDescription === "") {
-            throw "Inputs cannot be empty or empty strings with just spaces"
-        };
-
         if (typeof reviewTitle !== 'string' || typeof reviewDescription !== 'string') {
             throw "Inputs MUST be strings"
+        };
+
+        reviewTitle = reviewTitle.trim();
+        reviewDescription = reviewDescription.trim();
+
+        if (reviewTitle === "" || reviewDescription === "") {
+            throw "Inputs cannot be empty or empty strings with just spaces"
         };
 
         if (typeof rating !== 'number') {
@@ -187,8 +183,6 @@ let exportedMethods = {
         if (rating < 1 || rating > 5) {
             throw "Ratings can only be on a scale from 1 to 5."
         };
-
-        reviewId = reviewId.trim();
         
         if (!reviewId || reviewId === null || reviewId === undefined) {
             throw 'You must provide and id'
@@ -197,6 +191,8 @@ let exportedMethods = {
         if (typeof reviewId !== 'string') {
             throw 'ID must be a string'
         };
+
+        reviewId = reviewId.trim();
         
         if (reviewId.length === 0) {
             throw 'ID can not be an empty strings with just spaces'
@@ -235,8 +231,6 @@ let exportedMethods = {
     },
 
     async getAllReviewsOfPlace (id) {
-
-        id = id.trim();
         
         if (!id || id === null || id === undefined) {
             throw 'You must provide and id'
@@ -245,6 +239,8 @@ let exportedMethods = {
         if (typeof id !== 'string') {
             throw 'ID must be a string'
         };
+
+        id = id.trim();
         
         if (id.length === 0) {
             throw 'ID can not be an empty strings with just spaces'
@@ -256,19 +252,18 @@ let exportedMethods = {
 
         const reviewsCollection = await reviews();
 
-        const reviewArray = await reviewsCollection.findOne({_id: new ObjectId(id)}).toArray();
+        const reviewArray = await reviewsCollection.find({ placeId: { $eq: new ObjectId(id) } }).toArray();
 
         if (!reviewArray) {
             throw "Was not able to get the reviews for the place."
         };
 
-        return reviewArray || [];
+        return reviewArray;
 
     },
 
     async getReviewById (id) {
 
-        id = id.trim();
         
         if (!id || id === null || id === undefined) {
             throw 'You must provide and id'
@@ -277,6 +272,8 @@ let exportedMethods = {
         if (typeof id !== 'string') {
             throw 'ID must be a string'
         };
+
+        id = id.trim();
         
         if (id.length === 0) {
             throw 'ID can not be an empty strings with just spaces'
