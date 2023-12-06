@@ -1,0 +1,78 @@
+<section>
+  <h2>Admin Dashboard</h2>
+
+  <!-- Section to Add New Establishment -->
+  <article>
+    <h3>Add New Establishment</h3>
+    <form action="/admin/addEstablishment" method="post">
+      <fieldset>
+        <!-- ... Add establishment fields ... -->
+        <button type="submit">Add</button>
+      </fieldset>
+    </form>
+  </article>
+
+  <!-- Section to Edit Establishment // could separate by entity (park/store) -->
+  <article>
+    <h3>Edit Establishment</h3>
+    <form action="/admin/editEstablishment" method="post">
+      <fieldset>
+        <label for="editSelect">Select Establishment:</label>
+        <select id="editSelect" name="editSelect">
+          {{#each establishments}}
+            <option value="{{this.id}}">{{this.name}}</option>
+          {{/each}}
+        </select>
+
+        <!-- ... Fields for editing, populated dynamically after selection ... -->
+
+        <button type="submit">Update</button>
+      </fieldset>
+    </form>
+  </article>
+
+  <!-- Section to Remove Establishment // could separate by entity (park/store) -->
+  <article>
+    <h3>Remove Establishment</h3>
+    <form action="/admin/removeEstablishment" method="post">
+      <fieldset>
+        <label for="removeSelect">Select Establishment:</label>
+        <select id="removeSelect" name="removeSelect">
+          {{#each establishments}}
+            <option value="{{this.id}}">{{this.name}}</option>
+          {{/each}}
+        </select>
+
+        <button type="submit">Remove</button>
+      </fieldset>
+    </form>
+  </article>
+
+  <!-- Section to Manage Reviews -->
+  <article>
+    <h3>Manage Reviews</h3>
+    <ul>
+      {{#each reviews}}
+        <li>
+          <span>{{this.user}} - {{this.title}}</span>
+          <a href="/admin/editReview/{{this.id}}">Edit</a>
+          <a href="/admin/deleteReview/{{this.id}}">Delete</a>
+        </li>
+      {{/each}}
+    </ul>
+  </article>
+
+  <!-- Section to Manage User Accounts -->
+  <article>
+    <h3>Manage User Accounts</h3>
+    <ul>
+      {{#each users}}
+        <li>
+          <span>{{this.name}}</span>
+          <a href="/admin/editUser/{{this.id}}">Edit</a>
+          <a href="/admin/deactivateUser/{{this.id}}">Deactivate</a>
+        </li>
+      {{/each}}
+    </ul>
+  </article>
+</section>
