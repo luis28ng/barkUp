@@ -1,0 +1,19 @@
+<section>
+  <h2>{{petstore.name}} - Everything Your Pet Needs!</h2>
+  <p>{{petstore.description}}</p>
+  <p>Location: {{petstore.location}}</p>
+  <!-- Add more pet store details as necessary -->
+
+  <!-- Display reviews for the pet store -->
+  <h3>Reviews:</h3>
+  {{#each petstore.reviews}}
+    <div class="review">
+      <p>{{this.user}} says: "{{this.content}}"</p>
+    </div>
+  {{/each}}
+
+  <!-- Link to write a review -->
+  <a
+    href="/reviews/new?placeId={{petstore.id}}&redirectTo=petstore/{{petstore.id}}"
+  >Write a Review</a>
+</section>

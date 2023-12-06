@@ -1,0 +1,25 @@
+<section>
+  <h2>{{firstName}} {{lastName}}'s Profile</h2>
+  <div class="pet-gallery">
+    {{#each pets}}
+      <div class="pet">
+        <img src="{{this.petPhoto}}" alt="{{this.name}}" />
+        <p>Meet {{this.name}}, a lovely {{this.breed}}</p>
+      </div>
+    {{/each}}
+  </div>
+
+  <h3>Your Reviews</h3>
+  <!-- Display user's reviews -->
+  {{#each userReviews}}
+    <div>
+      <h3>{{this.title}}</h3>
+      <p>{{this.description}}</p>
+      <!-- Edit/Delete button/link for each review -->
+      <a href="/reviews/edit/{{this.id}}">Edit Review</a>
+      <a href="/reviews/delete/{{this.id}}">Delete Review</a>
+
+    </div>
+  {{/each}}
+
+</section>

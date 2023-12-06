@@ -1,0 +1,18 @@
+<section>
+  <h2>{{park.name}} - A Great Spot for Your Pets!</h2>
+  <p>{{park.description}}</p>
+  <p>Location: {{park.location}}</p>
+  <!-- Add more park details as necessary -->
+
+  <!-- Display reviews for the park -->
+  <h3>Reviews:</h3>
+  {{#each park.reviews}}
+    <div class="review">
+      <p>{{this.user}} says: "{{this.content}}"</p>
+    </div>
+  {{/each}}
+
+  <!-- Link to write a review -->
+  <a href="/reviews/new?placeId={{park.id}}&redirectTo=park/{{park.id}}">Write a
+    Review</a>
+</section>
