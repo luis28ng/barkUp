@@ -19,8 +19,8 @@ let exportedMethods = {
     ) {
       throw "Please provide valid search criteria.";
     }
-    const searchText = searchCriteria[0];
-    const searchZip = searchCriteria[1];
+    let searchText = searchCriteria[0];
+    let searchZip = searchCriteria[1];
     if (!searchText && !searchZip) throw "Must provide text or zip code.";
     if (searchText) {
       if (typeof searchText !== "string") throw "Text must be a string.";
@@ -38,18 +38,17 @@ let exportedMethods = {
     let parkList = null;
 
     if (searchText && searchZip) {
-      //TODO: Check if mongo regex function for searchText is working.
       parkList = await parkCollection
         .find({
           $and: [
-            { parkName: `/${searchText}/` },
+            { parkName: { $regex: searchText, $options: "i" } },
             { "location.zipCode": { $eq: searchZip } },
           ],
         })
         .toArray();
     } else if (searchText) {
       parkList = await parkCollection
-        .find({ parkName: `/${searchText}/` })
+        .find({ parkName: { $regex: searchText, $options: "i" } })
         .toArray();
     } else if (searchZip) {
       parkList = await parkCollection
@@ -75,7 +74,7 @@ let exportedMethods = {
     return park;
   },
 
-  async createParks(parkName, location) {
+  async createPark(parkName, location) {
     if (!parkName) throw "Must provide park name.";
     if (typeof parkName !== "string") throw "Park name must be a string.";
     if (parkName.trim().length === 0) {
@@ -191,7 +190,7 @@ let exportedMethods = {
     return park;
   },
 
-  async deleteParks(id) {
+  async deletePark(id) {
     if (!id) throw "Must provide ID.";
     if (typeof id !== "string") throw "ID must be a string.";
     if (id.trim().length === 0) throw "ID cannot be an empty string.";
@@ -208,7 +207,7 @@ let exportedMethods = {
     };
   },
 
-  async updateParks(id, parkName, location) {
+  async updatePark(id, parkName, location) {
     if (!id) throw "Must provide ID.";
     if (typeof id !== "string") throw "ID must be a string.";
     if (id.trim().length === 0) throw "ID cannot be an empty string.";
@@ -322,6 +321,136 @@ let exportedMethods = {
         location: location,
         rating: currentPark.rating,
         reviews: currentPark.reviews,
+      },
+      { returnDocument: "after" }
+    );
+    if (!updatedInfo) {
+      throw "Could not update park.";
+    }
+    return updatedInfo;
+  },
+
+  async addReview(id, rating, reviewId) {
+    if (!id) throw "Must provide ID.";
+    if (typeof id !== "string") throw "ID must be a string.";
+    if (id.trim().length === 0) throw "ID cannot be an empty string.";
+    id = id.trim();
+    if (!ObjectId.isValid(id)) throw "Not a valid ID.";
+    if (!rating) throw "Must provide rating.";
+    if (typeof rating !== "number") throw "Rating must be a number.";
+    if (rating < 1 || rating > 5) {
+      throw "Ratings can only be on a scale from 1 to 5.";
+    }
+    if (!reviewId) throw "Must provide ID.";
+    if (typeof reviewId !== "string") throw "ID must be a string.";
+    if (reviewId.trim().length === 0) throw "ID cannot be an empty string.";
+    reviewId = reviewId.trim();
+    if (!ObjectId.isValid(reviewId)) throw "Not a valid ID.";
+
+    const parkCollection = await parks();
+    const currentPark = await parkCollection.findOne({ _id: new ObjectId(id) });
+    const currentRating = currentPark.rating;
+    const reviewArr = currentPark.reviews;
+    let newAvg;
+    if (currentRating === 0) {
+      newAvg = rating;
+    } else {
+      newAvg =
+        (currentRating * reviewArr.length + rating) / (reviewArr.length + 1);
+    }
+    reviewArr.push(reviewId);
+    const updatedInfo = await parkCollection.findOneAndReplace(
+      { _id: new ObjectId(id) },
+      {
+        parkName: currentPark.parkName,
+        location: currentPark.location,
+        rating: newAvg,
+        reviews: reviewArr,
+      },
+      { returnDocument: "after" }
+    );
+    if (!updatedInfo) {
+      throw "Could not update park.";
+    }
+    return updatedInfo;
+  },
+
+  async updateReview(id, oldRating, newRating) {
+    if (!id) throw "Must provide ID.";
+    if (typeof id !== "string") throw "ID must be a string.";
+    if (id.trim().length === 0) throw "ID cannot be an empty string.";
+    id = id.trim();
+    if (!ObjectId.isValid(id)) throw "Not a valid ID.";
+
+    if (!oldRating) throw "Must provide rating.";
+    if (typeof oldRating !== "number") throw "Rating must be a number.";
+    if (oldRating < 1 || oldRating > 5) {
+      throw "Ratings can only be on a scale from 1 to 5.";
+    }
+    if (!newRating) throw "Must provide rating.";
+    if (typeof newRating !== "number") throw "Rating must be a number.";
+    if (newRating < 1 || newRating > 5) {
+      throw "Ratings can only be on a scale from 1 to 5.";
+    }
+    const parkCollection = await parks();
+    const currentPark = await parkCollection.findOne({ _id: new ObjectId(id) });
+    const currentRating = currentPark.rating;
+    const reviewArr = currentPark.reviews;
+    let newAvg = currentRating * reviewArr.length;
+    newAvg = (newAvg + newRating - oldRating) / reviewArr.length;
+    const updatedInfo = await parkCollection.findOneAndReplace(
+      { _id: new ObjectId(id) },
+      {
+        parkName: currentPark.parkName,
+        location: currentPark.location,
+        rating: newAvg,
+        reviews: currentPark.reviews,
+      },
+      { returnDocument: "after" }
+    );
+    if (!updatedInfo) {
+      throw "Could not update park.";
+    }
+    return updatedInfo;
+  },
+
+  async deleteReview(id, rating, reviewId) {
+    if (!id) throw "Must provide ID.";
+    if (typeof id !== "string") throw "ID must be a string.";
+    if (id.trim().length === 0) throw "ID cannot be an empty string.";
+    id = id.trim();
+    if (!ObjectId.isValid(id)) throw "Not a valid ID.";
+    if (!rating) throw "Must provide rating.";
+    if (typeof rating !== "number") throw "Rating must be a number.";
+    if (rating < 1 || rating > 5) {
+      throw "Ratings can only be on a scale from 1 to 5.";
+    }
+    if (!reviewId) throw "Must provide ID.";
+    if (typeof reviewId !== "string") throw "ID must be a string.";
+    if (reviewId.trim().length === 0) throw "ID cannot be an empty string.";
+    reviewId = reviewId.trim();
+    if (!ObjectId.isValid(reviewId)) throw "Not a valid ID.";
+
+    const parkCollection = await parks();
+    const currentPark = await parkCollection.findOne({ _id: new ObjectId(id) });
+    const currentRating = currentPark.rating;
+    const reviewArr = currentPark.reviews;
+    let newAvg = currentRating * reviewArr.length;
+    const newReviews = reviewArr.filter(function (x) {
+      return x !== reviewId;
+    });
+    if (newReviews.length === 0) {
+      newAvg = 0;
+    } else {
+      newAvg = (newAvg - rating) / newReviews.length;
+    }
+    const updatedInfo = await parkCollection.findOneAndReplace(
+      { _id: new ObjectId(id) },
+      {
+        parkName: currentPark.parkName,
+        location: currentPark.location,
+        rating: newAvg,
+        reviews: newReviews,
       },
       { returnDocument: "after" }
     );
