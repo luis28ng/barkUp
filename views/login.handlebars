@@ -1,12 +1,31 @@
 <section>
-  <h2>Login</h2>
-  <form action="/login" method="post">
-    <label for="username">Username:</label>
-    <input type="text" id="username" name="username" required />
-
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="password" required />
-
-    <button type="submit">Login</button>
+  <h1>Login</h1>
+  <form id="login-form" action="/login" method="POST">
+    <div>
+      <label for="emailAddressInput">Email Address:</label>
+      <input
+        type="email"
+        id="emailAddressInput"
+        name="emailAddressInput"
+        required
+      />
+    </div>
+    <div>
+      <label for="passwordInput">Password:</label>
+      <input type="password" id="passwordInput" name="passwordInput" required />
+    </div>
+    <div>
+      <button type="submit">Login</button>
+    </div>
   </form>
+
+  {{#if errors}}
+    <section class="errors">
+      {{#each errors}}
+        <p>{{this}}</p>
+      {{/each}}
+    </section>
+  {{/if}}
 </section>
+
+<p> Don't have an account? <a href="/register">Click here to register!</a></p>
