@@ -19,18 +19,18 @@ let exportedMethods = {
 
     async updateUser () {
 
-    }
-};
+    },
 
-export const registerUser = async (
-    firstName,
-    lastName,
-    emailAddress,
-    password,
-    role
-  ) => {
-    
-    firstName = firstName.trim();
+
+
+
+
+    async registerUser (firstName,
+      lastName,
+      emailAddress,
+      password,
+      role) {
+        firstName = firstName.trim();
     lastName = lastName.trim();
     emailAddress = emailAddress.trim();
     password = password.trim();
@@ -81,11 +81,14 @@ export const registerUser = async (
   }
   
   return {insertedUser: true};
-  
-  }
-  
-  export const loginUser = async (emailAddress, password) => {
-  emailAddress = emailAddress.trim();
+    },
+
+
+
+
+
+  async loginUser (emailAddress, password) {
+      emailAddress = emailAddress.trim();
   password = password.trim();
   if(!validEmail(emailAddress) || !validPass(password)){
     throw new Error("Invalid email or password");
@@ -111,13 +114,12 @@ export const registerUser = async (
     emailAddress: user.emailAddress,
     role: user.role
   }
-  //console.log(result);
   return result;
   }
   catch(e){
     throw new Error("Login error");
   }
-  };
-  
+    }
+};
 
 export default exportedMethods

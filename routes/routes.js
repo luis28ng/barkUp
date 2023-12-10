@@ -1,10 +1,10 @@
 import { Router } from 'express';
 const router = Router();
 
-import {createUser, deleteUser, updateUser} from '../data/users.js';
-import {getAllParks, searchParks, searchParksById, updateParks, deleteParks} from '../data/parks.js';
-import {getAllReviewsByUser, updateReview, createReview, deleteReview, getReviewById} from '../data/reviews.js';
-import {getAllPetStores, searchPetStores, searchPetStoresById, createPetStore, updatePetStore, deletePetStores} from '../data/petStores.js';
+import * as users from '../data/users.js';
+import * as parks from '../data/parks.js';
+import * as reviews from '../data/reviews.js';
+import * as stores from '../data/petStores.js';
 
 // Probably will need some sort of helpers.js for error checking in routes
 // unless it's all taken care of in data functions
