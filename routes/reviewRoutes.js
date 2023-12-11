@@ -12,9 +12,9 @@ router.route('/:id').get(async (req, res) => {
     const reviewId = req.params.id
     try {
         const review = await reviews.getReviewById(reviewId)
-        res.render.json(review)
+        res.json(review)
     } catch (e) {
-        res.render.status(404).json(`No review found with ID: ${reviewId}`);
+        res.status(404).json(`No review found with ID: ${reviewId}`);
     };
     
   })
@@ -35,18 +35,21 @@ router
   .post(async (req, res) => {
 
     console.log(req.body);
-    const placeId = req.params.id;
-    // const userId = req.session.user.userId
+    // const placeId = req.params.id;
+    const placeId = '65776cac0c0bfc7b13fd7a86';
+    // const userId = req.session.user.userId;
+    const userId = '65776cac0c0bfc7b13fd7a8a'
     const reviewTitle = req.body.reviewTitle;
     const rating = parseInt(req.body.rating);
     const reviewDescription = req.body.reviewDescription;
 
 
-    // try {
-    //     const newReview = await reviews.createReview()
-    // } catch (e) {
-    //     res.status(404).json("Error creating review")
-    // }
+    try {
+        const newReview = await reviews.createReview(userId,placeId,reviewTitle,rating,reviewDescription)
+        res.redirect(`/review/${newReview._id}`)
+    } catch (e) {
+        res.status(404).json("Error creating review")
+    }
 
   });
 
