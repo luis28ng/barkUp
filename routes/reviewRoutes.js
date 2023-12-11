@@ -1,6 +1,6 @@
 import { Router, json } from 'express';
 const router = Router();
-import reviews from '../data/reviews.js'
+import reviews from '../data/reviews.js';
 
 
 router.route('/').get(async (req, res) => {
@@ -12,7 +12,11 @@ router.route('/:id').get(async (req, res) => {
     const reviewId = req.params.id
     try {
         const review = await reviews.getReviewById(reviewId)
-        res.json(review)
+        const reviewTitle = review.reviewTitle;
+        const reviewDescription = review.reviewDescription;
+        const rating = review.rating;
+
+        res.render('review', { reviewTitle, reviewDescription, rating })
     } catch (e) {
         res.status(404).json(`No review found with ID: ${reviewId}`);
     };
@@ -23,20 +27,22 @@ router.route('/:id').get(async (req, res) => {
 router
   .route('/addReview/:id')
   .get(async (req, res) => {
-    const placeName = req.params.id;
+    // const placeId = req.params.id;
     // try {
-    //     const place = await reviews.getReviewById(id);
-
+    //     const place = await reviews.getReviewById(placeId);
+    //     const placeName = place.placeName;
+    //     res.render('review_form', { placeName });
     // } catch (e) {
-    //     res.render(json("No place with that ID"))
+    //     res.json("No place with that ID")
     // }
+    const placeName = req.params.id
     res.render('review_form', { placeName });
   })
   .post(async (req, res) => {
 
     console.log(req.body);
-    // const placeId = req.params.id;
-    const placeId = '65776cac0c0bfc7b13fd7a86';
+    const placeId = req.params.id;
+    // const placeId = '65776cac0c0bfc7b13fd7a86';
     // const userId = req.session.user.userId;
     const userId = '65776cac0c0bfc7b13fd7a8a'
     const reviewTitle = req.body.reviewTitle;
