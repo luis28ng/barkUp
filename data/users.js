@@ -72,7 +72,7 @@ const exportedMethods = {
       throw new Error("Error in Register");
     }
   
-    return { insertedUser: true };
+    return insertResult;
   },
 
   async loginUser(emailAddress, password) {
