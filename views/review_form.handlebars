@@ -6,7 +6,7 @@
 
 <body>
   <h2>Review for {{placeName}}</h2>
-  <form id="review-form" "/reviews/add" method="POST">
+  <form id="review-form" method="POST">
     <input type="hidden" name="placeId" value="{{placeId}}" />
 
     <label for="reviewTitle">Title:</label>
@@ -25,5 +25,7 @@
     <button type="submit">Submit Review</button>
   </form>
 
-  <script src="../public/js/reviews-csv.js"></script>
+  <p id="error" class="error" hidden></p>
+
+  <script src="/public/js/reviews-csv.js"></script>
 </body>

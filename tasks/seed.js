@@ -29,10 +29,10 @@ let houndAboutTown = petStores.createPetStore("Hound About Town", {open: "10:00A
 
 
 // Creating users
-let user1 = users.registerUser("Jameson", "Railey", "JKRailey013@gmail.com", "JKRailey13", "Password123!", "user");
+let user1 = users.registerUser("Jameson", "Railey", "JKRailey013@gmail.com", "Password123!", "user");
 
-let user2 = users.registerUser("Justin", "Cross", "jcross@stevens.edu", "JCross10", "JCross123!", "user");
-let user3 = users.registerUser("Head", "Founder", "admin123@admin.com", "Admin123", "Admin123!", "admin");
+let user2 = users.registerUser("Justin", "Cross", "jcross@stevens.edu", "JCross123!", "user");
+let user3 = users.registerUser("Head", "Founder", "admin123@admin.com", "Admin123!", "admin");
 
 
 // Creating park reviews
