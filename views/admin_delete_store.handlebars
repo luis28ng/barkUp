@@ -1,0 +1,8 @@
+<section>
+  <h2>Delete Store</h2>
+  <p>Are you sure you want to delete the store: "{{storeName}}"?</p>
+  <form action="/admin/deleteStore/{{storeId}}" method="post">
+    <button type="submit" class="delete-button">Delete Store</button>
+    <a href="/admin/dashboard" class="cancel-button">Cancel</a>
+  </form>
+</section>
