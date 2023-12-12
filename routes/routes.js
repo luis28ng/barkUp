@@ -1,10 +1,10 @@
 import { Router } from 'express';
 const router = Router();
 
-import {createUser, deleteUser, updateUser} from '../data/users.js';
-import {getAllParks, searchParks, searchParksById, updateParks, deleteParks} from '../data/parks.js';
-import {getAllReviewsByUser, updateReview, createReview, deleteReview, getReviewById} from '../data/reviews.js';
-import {getAllPetStores, searchPetStores, searchPetStoresById, createPetStore, updatePetStore, deletePetStores} from '../data/petStores.js';
+import parks from "../data/parks.js";
+import petStores from "../data/petStores.js";
+import reviews from "../data/reviews.js";
+import users from "../data/users.js";
 
 // Probably will need some sort of helpers.js for error checking in routes
 // unless it's all taken care of in data functions
@@ -12,7 +12,7 @@ import {getAllPetStores, searchPetStores, searchPetStoresById, createPetStore, u
 
 router.route('/').get(async (req, res) => {
     // Renders home page
-    return res.render('home', {});
+    return res.render('welcome', {});
 });
 
 router

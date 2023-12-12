@@ -1,0 +1,27 @@
+<section>
+  <h2>Add New Store</h2>
+  <form action="/admin/addStore" method="post">
+    <label for="storeName">Store Name:</label>
+    <input type="text" id="storeName" name="storeName" required />
+
+    <label for="operationHours">Operation Hours:</label>
+    <input type="text" id="operationHours" name="operationHours" required />
+
+    <fieldset>
+      <legend>Location:</legend>
+      <label for="address">Street Address:</label>
+      <input type="text" id="address" name="location[address]" required />
+
+      <label for="city">City:</label>
+      <input type="text" id="city" name="location[city]" required />
+
+      <label for="state">State:</label>
+      <input type="text" id="state" name="location[state]" required />
+
+      <label for="zipCode">Zip Code:</label>
+      <input type="text" id="zipCode" name="location[zipCode]" required />
+    </fieldset>
+
+    <button type="submit">Add Store</button>
+  </form>
+</section>

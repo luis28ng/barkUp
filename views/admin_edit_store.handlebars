@@ -1,0 +1,87 @@
+<section>
+  <h2>Edit Store: {{store.storeName}}</h2>
+  <form action="/admin/editStore/{{store.id}}" method="post">
+    <label for="storeName">Store Name:</label>
+    <input
+      type="text"
+      id="storeName"
+      name="storeName"
+      value="{{store.storeName}}"
+      required
+    />
+
+    <label for="operationHours">Operation Hours:</label>
+    <input
+      type="text"
+      id="operationHours"
+      name="operationHours"
+      value="{{store.operationHours}}"
+      required
+    />
+
+    <fieldset>
+      <legend>Location:</legend>
+      <label for="address">Address:</label>
+      <input
+        type="text"
+        id="address"
+        name="location[address]"
+        value="{{store.location.address}}"
+        required
+      />
+
+      <label for="city">City:</label>
+      <input
+        type="text"
+        id="city"
+        name="location[city]"
+        value="{{store.location.city}}"
+        required
+      />
+
+      <label for="state">State:</label>
+      <input
+        type="text"
+        id="state"
+        name="location[state]"
+        value="{{store.location.state}}"
+        required
+      />
+
+      <label for="zipCode">Zip Code:</label>
+      <input
+        type="text"
+        id="zipCode"
+        name="location[zipCode]"
+        value="{{store.location.zipCode}}"
+        required
+      />
+    </fieldset>
+
+    <label for="rating">Rating:</label>
+    <input
+      type="number"
+      id="rating"
+      name="rating"
+      value="{{store.rating}}"
+      min="0"
+      max="5"
+      step="0.1"
+      required
+    />
+
+    <button type="submit">Update Store</button>
+  </form>
+
+  <!-- Section to Manage Reviews for the Store -->
+  <h3>Manage Reviews for {{store.storeName}}</h3>
+  <ul>
+    {{#each store.reviews}}
+      <li>
+        <span>{{this.user}} - {{this.title}}</span>
+        <a href="/admin/editReview/{{this.id}}">Edit</a>
+        <a href="/admin/deleteReview/{{this.id}}">Delete</a>
+      </li>
+    {{/each}}
+  </ul>
+</section>

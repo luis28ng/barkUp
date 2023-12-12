@@ -1,0 +1,12 @@
+<section>
+    <h2>Search Results</h2>
+    <ul>
+        {{#each searchResults}}
+            <li>
+                <span>{{this.name}} - {{this.type}}</span>
+                <a href="/admin/edit{{this.type | capitalize}}/{{this.id}}">Edit</a>
+                <a href="/admin/delete{{this.type | capitalize}}/{{this.id}}">Delete</a>
+            </li>
+        {{/each}}
+    </ul>
+</section>

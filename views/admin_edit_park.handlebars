@@ -1,0 +1,78 @@
+<section>
+  <h2>Edit Park: {{park.parkName}}</h2>
+  <form action="/admin/editPark/{{park.id}}" method="post">
+    <label for="parkName">Park Name:</label>
+    <input
+      type="text"
+      id="parkName"
+      name="parkName"
+      value="{{park.parkName}}"
+      required
+    />
+
+    <fieldset>
+      <legend>Location:</legend>
+      <label for="address">Address:</label>
+      <input
+        type="text"
+        id="address"
+        name="location[address]"
+        value="{{park.location.address}}"
+        required
+      />
+
+      <label for="city">City:</label>
+      <input
+        type="text"
+        id="city"
+        name="location[city]"
+        value="{{park.location.city}}"
+        required
+      />
+
+      <label for="state">State:</label>
+      <input
+        type="text"
+        id="state"
+        name="location[state]"
+        value="{{park.location.state}}"
+        required
+      />
+
+      <label for="zipCode">Zip Code:</label>
+      <input
+        type="text"
+        id="zipCode"
+        name="location[zipCode]"
+        value="{{park.location.zipCode}}"
+        required
+      />
+    </fieldset>
+
+    <label for="rating">Rating:</label>
+    <input
+      type="number"
+      id="rating"
+      name="rating"
+      value="{{park.rating}}"
+      min="0"
+      max="5"
+      step="0.1"
+      required
+    />
+
+    <button type="submit">Update Park</button>
+  </form>
+
+  <!-- Section to Manage Reviews for the Park -->
+  <h3>Manage Reviews for {{park.parkName}}</h3>
+  <ul>
+    {{#each park.reviews}}
+      <li>
+        <span>{{this.user}} - {{this.title}}</span>
+        <a href="/admin/editReview/{{this.id}}">Edit</a>
+        <a href="/admin/deleteReview/{{this.id}}">Delete</a>
+      </li>
+    {{/each}}
+  </ul>
+</section>
