@@ -1,12 +1,15 @@
-<section>
-  <h2>Login</h2>
-  <form action="/login" method="post">
-    <label for="username">Username:</label>
-    <input type="text" id="username" name="username" required />
-
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="password" required />
-
+<main>
+<form id="login-form" action="/login" method="POST">
+        <label for="userNameInput">User Name:</label>
+        <input type="username" id="userNameInput" name="userNameInput" required>
+        <label for="passwordInput">Password:</label>
+        <input type="password" id="passwordInput" name="passwordInput" required>
     <button type="submit">Login</button>
-  </form>
-</section>
+</form>
+
+<p>
+    <a href="/register">Click here to register!</a>
+</p>
+<div id="error" class="error">{{error}}</div>
+<script src = '../public/js/client_side_validation.js'></script>
+</main>

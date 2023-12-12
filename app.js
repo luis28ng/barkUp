@@ -11,6 +11,7 @@ const __dirname = dirname(__filename);
 
 const staticDir = express.static(__dirname + '/public');
 
+
 app.use('/public', staticDir);
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
