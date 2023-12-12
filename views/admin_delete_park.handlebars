@@ -1,0 +1,8 @@
+<section>
+  <h2>Delete Park</h2>
+  <p>Are you sure you want to delete the park: "{{parkName}}"?</p>
+  <form action="/admin/deletePark/{{parkId}}" method="post">
+    <button type="submit" class="delete-button">Delete Park</button>
+    <a href="/admin/dashboard" class="cancel-button">Cancel</a>
+  </form>
+</section>
