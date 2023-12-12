@@ -356,6 +356,55 @@ router
     return res.redirect(`/admin/park/${park._id}`);
   });
 
+router
+  .route("/admin/addPark")
+  .get(async (req, res) => {
+    return res.render("addPark");
+  })
+  .post(async (req, res) => {
+    let parkInfo = req.body;
+    let parkName = parkInfo.parkName;
+    let location = parkInfo.location;
+
+    try {
+      validPark(parkName, location);
+    } catch (error) {
+      return res.status(400).render("addpark", { error: error });
+    }
+    let park;
+    try {
+      park = await createPark(parkName, location);
+    } catch (error) {
+      return res.status(400).render("addpark", { error: error });
+    }
+    return res.redirect(`/admin/park/${park._id}`);
+  });
+
+router
+  .route("/admin/addPetStore")
+  .get(async (req, res) => {
+    return res.render("addPetStore");
+  })
+  .post(async (req, res) => {
+    let petStoreInfo = req.body;
+    let storeName = petStoreInfo.storeName;
+    let operationHours = petStoreInfo.operationHours;
+    let location = petStoreInfo.location;
+
+    try {
+      validPetStore(storeName, operationHours, location);
+    } catch (error) {
+      return res.status(400).render("addPetStore", { error: error });
+    }
+    let petStore;
+    try {
+      petStore = await createPetStore(storeName, operationHours, location);
+    } catch (error) {
+      return res.status(400).render("addPetStore", { error: error });
+    }
+    return res.redirect(`/admin/petSTore/${petStore._id}`);
+  });
+
 // Admin edit store
 router
   .route("/admin/editStore/:id")
