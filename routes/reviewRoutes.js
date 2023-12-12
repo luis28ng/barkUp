@@ -27,6 +27,7 @@ router.route('/:id').get(async (req, res) => {
 router
   .route('/addReview/:id')
   .get(async (req, res) => {
+    // Maybe at some point add a GET park and store function
     // const placeId = req.params.id;
     // try {
     //     const place = await reviews.getReviewById(placeId);
@@ -42,7 +43,6 @@ router
 
     console.log(req.body);
     const placeId = req.params.id;
-    // const placeId = '65776cac0c0bfc7b13fd7a86';
     // const userId = req.session.user.userId;
     const userId = '65776cac0c0bfc7b13fd7a8a'
     const reviewTitle = req.body.reviewTitle;
