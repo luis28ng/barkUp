@@ -1,7 +1,9 @@
 import allRoutes from "./routes.js";
+import reviewRoutes from "./reviewRoutes.js";
 import { static as staticDir } from "express";
 const constructorMethod = (app) => {
   app.use("/", allRoutes);
+  app.use("/review", reviewRoutes);
   app.use("/public", staticDir("public"));
 
   app.use("*", (req, res) => {
