@@ -1,4 +1,5 @@
 import { petStores } from "../config/mongoCollections.js";
+import reviewData from "./reviews.js";
 import { ObjectId } from "mongodb";
 
 let exportedMethods = {
@@ -219,6 +220,10 @@ let exportedMethods = {
     id = id.trim();
     if (!ObjectId.isValid(id)) throw "Not a valid ID.";
     const storeCollection = await petStores();
+    const store = await storeCollection.findOne({ _id: new ObjectId(id) });
+    for (const id of store.reviews) {
+      await reviewData.deleteReview(id);
+    }
     const deletionInfo = await storeCollection.findOneAndDelete({
       _id: new ObjectId(id),
     });

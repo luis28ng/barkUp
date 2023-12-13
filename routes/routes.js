@@ -1,29 +1,10 @@
 import { Router } from "express";
 const router = Router();
-
-import { createUser, deleteUser, updateUser } from "../data/users.js";
-import {
-  getAllParks,
-  searchParks,
-  searchParksById,
-  updatePark,
-  deletePark,
-} from "../data/parks.js";
-import {
-  getAllReviewsByUser,
-  updateReview,
-  createReview,
-  deleteReview,
-  getReviewById,
-} from "../data/reviews.js";
-import {
-  getAllPetStores,
-  searchPetStores,
-  searchPetStoresById,
-  createPetStore,
-  updatePetStore,
-  deletePetStore,
-} from "../data/petStores.js";
+import { ObjectId } from "mongodb";
+import userData from "../data/users.js";
+import parkData from "../data/parks.js";
+import reviewData from "../data/reviews.js";
+import petStoreData from "../data/petStores.js";
 
 import { validPark, validPetStore, validReview } from "../helpers.js";
 
@@ -80,15 +61,15 @@ router
     try {
       if (type === "store") {
         if (searchText || searchZip) {
-          results = await searchPetStores([searchText, searchZip]);
+          results = await petStoreData.searchPetStores([searchText, searchZip]);
         } else {
-          results = await getAllPetStores();
+          results = await petStoreData.getAllPetStores();
         }
       } else if (type === "park") {
         if (searchText || searchZip) {
-          results = await searchParks([searchText, searchZip]);
+          results = await parkData.searchParks([searchText, searchZip]);
         } else {
-          results = await getAllParks();
+          results = await parkData.getAllParks();
         }
       }
     } catch (error) {
@@ -151,7 +132,7 @@ router
     }
     let review;
     try {
-      review = await getReviewById(id);
+      review = await reviewData.getReviewById(id);
     } catch (error) {
       return res.status(400).render("error", { error: error });
     }
@@ -180,7 +161,12 @@ router
     }
     let review;
     try {
-      review = await updateReview(id, reviewTitle, rating, reviewDescription);
+      review = await reviewData.updateReview(
+        id,
+        reviewTitle,
+        rating,
+        reviewDescription
+      );
     } catch (error) {
       return res.status(400).render("edit_review", { error: error });
     }
@@ -192,7 +178,7 @@ router
   .route("/admin")
   .get(async (req, res) => {
     //code here for GET
-    return res.render("admin_search", {});
+    return res.render("admin_panel", {});
   })
   .post(async (req, res) => {
     //code here for POST
@@ -225,29 +211,29 @@ router
         if (!zipReg.test(searchZip)) throw "Invalid zip code";
       }
     } catch (error) {
-      return res.status(400).render("admin_search", { error: error });
+      return res.status(400).render("admin_panel", { error: error });
     }
 
     let results = null;
     try {
       if (type === "store") {
         if (searchText || searchZip) {
-          results = await searchPetStores([searchText, searchZip]);
+          results = await petStoreData.searchPetStores([searchText, searchZip]);
         } else {
-          results = await getAllPetStores();
+          results = await petStoreData.getAllPetStores();
         }
       } else if (type === "park") {
         if (searchText || searchZip) {
-          results = await searchParks([searchText, searchZip]);
+          results = await parkData.searchParks([searchText, searchZip]);
         } else {
-          results = await getAllParks();
+          results = await parkData.getAllParks();
         }
       }
     } catch (error) {
-      return res.status(500).render("admin_search", { error: error });
+      return res.status(500).render("admin_panel", { error: error });
     }
 
-    return res.render("admin_search", { results });
+    return res.render("admin_panel", { results });
   });
 
 router
@@ -267,11 +253,11 @@ router
     }
     let park;
     try {
-      park = await searchParksById(id);
+      park = await parkData.searchParksById(id);
     } catch (error) {
       return res.status(400).render("error", { error: error });
     }
-    return res.render("admin_park_details", { park: park });
+    return res.render("park_details", { park: park });
   })
   .post(async (req, res) => {
     //code here for POST
@@ -279,7 +265,7 @@ router
   });
 
 router
-  .route("/admin/petStore/:id")
+  .route("/admin/store/:id")
   .get(async (req, res) => {
     //code here for GET
     let id = req.params.id;
@@ -294,7 +280,7 @@ router
     }
     let petStore;
     try {
-      petStore = await searchPetStoresById(id);
+      petStore = await petStoreData.searchPetStoresById(id);
     } catch (error) {
       return res.status(400).render("error", { error: error });
     }
@@ -304,6 +290,60 @@ router
     //code here for POST
     console.log(req.body);
   });
+
+router
+  .route("/admin/addPark")
+  .get(async (req, res) => {
+    return res.render("admin_add_park");
+  })
+  .post(async (req, res) => {
+    let parkInfo = req.body;
+    let parkName = parkInfo.parkName;
+    let location = parkInfo.location;
+
+    try {
+      validPark(parkName, location);
+    } catch (error) {
+      return res.status(400).render("admin_add_park", { error: error });
+    }
+    let park;
+    try {
+      park = await parkData.createPark(parkName, location);
+    } catch (error) {
+      return res.status(400).render("admin_add_park", { error: error });
+    }
+    return res.redirect(`/admin/park/${park._id}`);
+  });
+
+router
+  .route("/admin/addStore")
+  .get(async (req, res) => {
+    return res.render("admin_add_store");
+  })
+  .post(async (req, res) => {
+    let petStoreInfo = req.body;
+    let storeName = petStoreInfo.storeName;
+    let operationHours = petStoreInfo.operationHours;
+    let location = petStoreInfo.location;
+
+    try {
+      validPetStore(storeName, operationHours, location);
+    } catch (error) {
+      return res.status(400).render("admin_add_store", { error: error });
+    }
+    let petStore;
+    try {
+      petStore = await petStoreData.createPetStore(
+        storeName,
+        operationHours,
+        location
+      );
+    } catch (error) {
+      return res.status(400).render("admin_add_store", { error: error });
+    }
+    return res.redirect(`/admin/store/${petStore._id}`);
+  });
+
 router
   .route("/admin/editPark/:id")
   .get(async (req, res) => {
@@ -320,12 +360,12 @@ router
     }
     let park;
     try {
-      park = await searchParksById(id);
+      park = await parkData.searchParksById(id);
     } catch (error) {
       return res.status(400).render("error", { error: error });
     }
     //Will render form with all park information filled in
-    return res.render("edit_park", { park: park });
+    return res.render("admin_edit_park", { park: park });
   })
   .post(async (req, res) => {
     //code here for POST
@@ -345,64 +385,15 @@ router
     try {
       validPark(parkName, location);
     } catch (error) {
-      return res.status(400).render("edit_park", { error: error });
+      return res.status(400).render("admin_edit_park", { error: error });
     }
     let park;
     try {
-      park = await updatePark(id, parkName, location);
+      park = await parkData.updatePark(id, parkName, location);
     } catch (error) {
-      return res.status(400).render("edit_park", { error: error });
+      return res.status(400).render("admin_edit_park", { error: error });
     }
     return res.redirect(`/admin/park/${park._id}`);
-  });
-
-router
-  .route("/admin/addPark")
-  .get(async (req, res) => {
-    return res.render("addPark");
-  })
-  .post(async (req, res) => {
-    let parkInfo = req.body;
-    let parkName = parkInfo.parkName;
-    let location = parkInfo.location;
-
-    try {
-      validPark(parkName, location);
-    } catch (error) {
-      return res.status(400).render("addpark", { error: error });
-    }
-    let park;
-    try {
-      park = await createPark(parkName, location);
-    } catch (error) {
-      return res.status(400).render("addpark", { error: error });
-    }
-    return res.redirect(`/admin/park/${park._id}`);
-  });
-
-router
-  .route("/admin/addPetStore")
-  .get(async (req, res) => {
-    return res.render("addPetStore");
-  })
-  .post(async (req, res) => {
-    let petStoreInfo = req.body;
-    let storeName = petStoreInfo.storeName;
-    let operationHours = petStoreInfo.operationHours;
-    let location = petStoreInfo.location;
-
-    try {
-      validPetStore(storeName, operationHours, location);
-    } catch (error) {
-      return res.status(400).render("addPetStore", { error: error });
-    }
-    let petStore;
-    try {
-      petStore = await createPetStore(storeName, operationHours, location);
-    } catch (error) {
-      return res.status(400).render("addPetStore", { error: error });
-    }
-    return res.redirect(`/admin/petSTore/${petStore._id}`);
   });
 
 // Admin edit store
@@ -422,11 +413,11 @@ router
     }
     let petStore;
     try {
-      petStore = await searchPetStoresById(id);
+      petStore = await petStoreData.searchPetStoresById(id);
     } catch (error) {
       return res.status(400).render("error", { error: error });
     }
-    return res.render("edit_petStore", { petStore: petStore });
+    return res.render("admin_edit_store", { petStore: petStore });
   })
   .post(async (req, res) => {
     //code here for POST
@@ -447,15 +438,20 @@ router
     try {
       validPetStore(storeName, operationHours, location);
     } catch (error) {
-      return res.status(400).render("edit_petStore");
+      return res.status(400).render("admin_edit_store");
     }
     let petStore;
     try {
-      petStore = await updatePetStore(id, storeName, operationHours, location);
+      petStore = await petStoreData.updatePetStore(
+        id,
+        storeName,
+        operationHours,
+        location
+      );
     } catch (error) {
-      return res.status(500).render("edit_petStore", { error: error });
+      return res.status(500).render("admin_edit_store", { error: error });
     }
-    return res.redirect(`/admin/petStore/${petStore._id}`);
+    return res.redirect(`/admin/store/${petStore._id}`);
   });
 
 router
@@ -473,11 +469,11 @@ router
     }
     let review;
     try {
-      review = await getReviewById(id);
+      review = await reviewData.getReviewById(id);
     } catch (error) {
       return res.status(400).render("error", { error: error });
     }
-    return res.render("delete_review", { review: review });
+    return res.render("admin_delete_review", { review: review });
   })
   .post(async (req, res) => {
     let id = req.params.id;
@@ -491,7 +487,7 @@ router
       return res.status(400).render("error", { error: error });
     }
     try {
-      await deleteReview(id);
+      let review = await reviewData.deleteReview(id);
     } catch (error) {
       return res.status(500).render("error", { error: error });
     }
@@ -499,7 +495,7 @@ router
   });
 
 router
-  .route("admin/deletePetStore/:id")
+  .route("/admin/deleteStore/:id")
   .get(async (req, res) => {
     let id = req.params.id;
     try {
@@ -513,11 +509,11 @@ router
     }
     let petStore;
     try {
-      petStore = await searchPetStoresById(id);
+      petStore = await petStoreData.searchPetStoresById(id);
     } catch (error) {
       return res.status(400).render("error", { error: error });
     }
-    return res.render("delete_petStore", { petStore: petStore });
+    return res.render("admin_delete_store", { petStore: petStore });
   })
   .post(async (req, res) => {
     let id = req.params.id;
@@ -531,7 +527,7 @@ router
       return res.status(400).render("error", { error: error });
     }
     try {
-      await deletePetStore(id);
+      await petStoreData.deletePetStore(id);
     } catch (error) {
       return res.status(500).render("error", { error: error });
     }
@@ -553,11 +549,11 @@ router
     }
     let park;
     try {
-      park = await searchParksById(id);
+      park = await parkData.searchParksById(id);
     } catch (error) {
       return res.status(400).render("error", { error: error });
     }
-    return res.render("delete_park", { park: park });
+    return res.render("admin_delete_park", { park: park });
   })
   .post(async (req, res) => {
     let id = req.params.id;
@@ -571,7 +567,7 @@ router
       return res.status(400).render("error", { error: error });
     }
     try {
-      await deletePark(id);
+      await parkData.deletePark(id);
     } catch (error) {
       return res.status(500).render("error", { error: error });
     }
@@ -629,7 +625,7 @@ router
       });
     }
     try {
-      const inserted = await createUser(
+      const inserted = await userData.createUser(
         firstNameInput,
         lastNameInput,
         emailAddressInput,
@@ -677,7 +673,7 @@ router
 
     try {
       console.log("passed validation");
-      const user = await checkUser(emailAddressInput, passwordInput);
+      const user = await userData.checkUser(emailAddressInput, passwordInput);
       req.session.user = user;
 
       console.log("passed user check");
