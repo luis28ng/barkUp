@@ -6,6 +6,8 @@ import parkData from "../data/parks.js";
 import reviewData from "../data/reviews.js";
 import petStoreData from "../data/petStores.js";
 
+import { validPark, validPetStore, validReview } from "../helpers.js";
+
 // Probably will need some sort of helpers.js for error checking in routes
 // unless it's all taken care of in data functions
 // import {} from ../helpers.js
