@@ -12,12 +12,15 @@
             let error = false;
 
             console.log('form submitted')
+            console.log(reviewTitle.value)
+            console.log(rating.value)
+            console.log(reviewDescription.value)
 
             try {
                 reviewTitle.value = checkString(reviewTitle.value, "Review title")
-            } catch (error) {
+            } catch (e) {
                 error = true;
-                errorDiv.innerHTML = error;
+                errorDiv.innerHTML = e;
                 errorDiv.hidden = false;
 
                 event.preventDefault();
@@ -33,9 +36,9 @@
         
             try {
                 reviewDescription.value = checkString(reviewDescription.value, "Review description")
-            } catch (error) {
+            } catch (e) {
                 error = true;
-                errorDiv.innerHTML = error;
+                errorDiv.innerHTML = e;
                 errorDiv.hidden = false;
 
                 event.preventDefault();
