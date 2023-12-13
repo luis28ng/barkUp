@@ -257,7 +257,13 @@ router
     } catch (error) {
       return res.status(400).render("error", { error: error });
     }
-    return res.render("park_details", { park: park });
+    let reviews;
+    try {
+      reviews = await reviewData.getAllReviewsOfPlace(id);
+    } catch (error) {
+      return res.status(400).render("error", { error: error });
+    }
+    return res.render("park_details", { park: park, reviews: reviews });
   })
   .post(async (req, res) => {
     //code here for POST
@@ -284,7 +290,16 @@ router
     } catch (error) {
       return res.status(400).render("error", { error: error });
     }
-    return res.render("admin_petstore_details", { petStore: petStore });
+    let reviews;
+    try {
+      reviews = await reviewData.getAllReviewsOfPlace(id);
+    } catch (error) {
+      return res.status(400).render("error", { error: error });
+    }
+    return res.render("petstore_details", {
+      petStore: petStore,
+      reviews: reviews,
+    });
   })
   .post(async (req, res) => {
     //code here for POST
@@ -364,8 +379,17 @@ router
     } catch (error) {
       return res.status(400).render("error", { error: error });
     }
+    let reviews;
+    try {
+      reviews = await reviewData.getAllReviewsOfPlace(id);
+    } catch (error) {
+      return res.status(400).render("error", { error: error });
+    }
+    for (let i = 0; i < reviews.length; i++) {
+      reviews[i]._id = reviews[i]._id.toString();
+    }
     //Will render form with all park information filled in
-    return res.render("admin_edit_park", { park: park });
+    return res.render("admin_edit_park", { park: park, reviews: reviews });
   })
   .post(async (req, res) => {
     //code here for POST
@@ -417,7 +441,20 @@ router
     } catch (error) {
       return res.status(400).render("error", { error: error });
     }
-    return res.render("admin_edit_store", { petStore: petStore });
+    let reviews;
+    try {
+      reviews = await reviewData.getAllReviewsOfPlace(id);
+    } catch (error) {
+      return res.status(400).render("error", { error: error });
+    }
+    for (let i = 0; i < reviews.length; i++) {
+      reviews[i]._id = reviews[i]._id.toString();
+    }
+    return res.render("admin_edit_store", {
+      petStore: petStore,
+      reviews,
+      reviews,
+    });
   })
   .post(async (req, res) => {
     //code here for POST

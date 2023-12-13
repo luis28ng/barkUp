@@ -6,9 +6,9 @@
 
   <!-- Display reviews for the park -->
   <h3>Reviews:</h3>
-  {{#each park.reviews}}
+  {{#each reviews}}
     <div class="review">
-      <p>{{this.user}} says: "{{this.content}}"</p>
+      <p>{{this.userId}} says: "{{this.reviewTitle}}"</p>
     </div>
   {{/each}}
 

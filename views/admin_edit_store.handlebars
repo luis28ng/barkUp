@@ -74,13 +74,13 @@
   </form>
 
   <!-- Section to Manage Reviews for the Store -->
-  <h3>Manage Reviews for {{store.storeName}}</h3>
+  <h3>Manage Reviews for {{petStore.storeName}}</h3>
   <ul>
-    {{#each store.reviews}}
+    {{#each reviews}}
       <li>
-        <span>{{this.user}} - {{this.title}}</span>
-        <a href="/admin/editReview/{{this.id}}">Edit</a>
-        <a href="/admin/deleteReview/{{this.id}}">Delete</a>
+        <span>{{this.userId}} - {{this.reviewTitle}}</span>
+        <a href="/editReview/{{this._id}}">Edit</a>
+        <a href="/admin/deleteReview/{{this._id}}">Delete</a>
       </li>
     {{/each}}
   </ul>
