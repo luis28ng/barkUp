@@ -1,5 +1,11 @@
+<<<<<<< Updated upstream
 <main>
 <form id="login-form" action="/login" method="POST">
+=======
+<section>
+  <h1>Login</h1>
+  <form id="login-form" action="/login" method="POST">
+>>>>>>> Stashed changes
         <label for="userNameInput">User Name:</label>
         <input type="username" id="userNameInput" name="userNameInput" required>
         <label for="passwordInput">Password:</label>
@@ -7,9 +13,22 @@
     <button type="submit">Login</button>
 </form>
 
+<<<<<<< Updated upstream
 <p>
     <a href="/register">Click here to register!</a>
 </p>
 <div id="error" class="error">{{error}}</div>
 <script src = '../public/js/client_side_validation.js'></script>
 </main>
+=======
+  {{!-- {{#if error}}
+    <section class="errors">
+      {{#each error}}
+        <p>{{this}}</p>
+      {{/each}}
+    </section>
+  {{/if}}
+</section> --}}
+<div id="error" class="error">{{error}}</div>
+<p> Don't have an account? <a href="/register">Click here to register!</a></p>
+>>>>>>> Stashed changes

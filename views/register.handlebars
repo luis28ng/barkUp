@@ -1,5 +1,9 @@
+<<<<<<< Updated upstream
 <main>
   {{header}}
+=======
+<h1>BarkUp Registration</h1>
+>>>>>>> Stashed changes
 <form id="register-form" action="/register" method="POST">
     <label for="firstNameInput">First Name:</label>
     <input type="text" id="firstNameInput" name="firstNameInput" required>
@@ -21,9 +25,22 @@
 <button type="submit">Register</button>
 </form>
 
+<<<<<<< Updated upstream
 <p>
     <a href="/login">Already have an account? Click here to log-in</a>
 </p>
 <div id="error" class="error">{{error}}</div>
 <script src = '../public/js/signup-csv.js'></script>
 </main>
+=======
+{{!-- {{#if error}}
+  <section class="errors">
+    {{#each error}}
+      <p>{{this}}</p>
+    {{/each}}
+  </section>
+{{/if}} --}}
+
+<div id="error" class="error">{{error}}</div>
+<p>Already have an account? <a href="/login">Click here to log-in</a></p>
+>>>>>>> Stashed changes
