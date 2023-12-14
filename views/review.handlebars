@@ -5,7 +5,8 @@
 </head>
 
 <body>
-    {{#unless deletionSuccess}}
+    {{#if (not deletionSuccess)}}
+    {{#if (not updateSuccess)}}
       <h2>Title: {{reviewTitle}}</h2>
       <p>Description: {{reviewDescription}}</p>
       <p>Rating: {{rating}}</p>
@@ -14,28 +15,41 @@
         <input type="hidden" name="_method" value="DELETE">
         <button type="submit" onclick="return confirm('Are you sure you want to delete this item?')">Delete</button>
       </form>
-    <br>
-    <button onclick="openUpdateModal()">Update</button>
-    <br>
-    <div id="updateModal" class="modal">
-      <div class="modal-content">
-        <button class="close-button" onclick="closeUpdateModal()">Close</button>
-        <br>
-        <form action="/review/{{reviewId}}" method="POST" id="updateForm">
-          <input type="hidden" name="_method" value="PUT">
-          <input type="text" id="updatedTitle" name="updatedTitle" placeholder="Updated Title" required>
-          <textarea id="updatedDescription" name="updatedDescription" placeholder="Updated Description" required></textarea>
-          <input type="number" id="updatedRating" name="updatedRating"  min="1" max="5" placeholder="Updated Rating" required>
-          <button type="submit">Save</button>
-        </form>
+      <br>
+      <button onclick="openUpdateModal()">Update</button>
+      <br>
+      <div id="updateModal" class="modal">
+        <div class="modal-content">
+          <br>
+          <button class="close-button" onclick="closeUpdateModal()">Close</button>
+          <br>
+          <form action="/review/{{reviewId}}" method="POST" id="updateForm">
+            <input type="hidden" name="_method" value="PUT">
+            <label>Updated title:</label>
+            <input type="text" id="updatedTitle" name="updatedTitle" required>
+            <label>Updated description:</label>
+            <textarea id="updatedDescription" name="updatedDescription" required></textarea>
+            <label>Updated rating:</label>
+            <input type="number" id="updatedRating" name="updatedRating"  min="1" max="5" required>
+            <button type="submit">Save</button>
+          </form>
+        </div>
       </div>
-    </div>
-    {{/unless}}
+    {{/if}}
+    {{/if}}
     {{#if deletionSuccess}}
       <p style="color: green;">Deletion successful!</p>
     {{else}}
       {{#if deletionError}}
         <p style="color: red;">Deletion failed. Please try again.</p>
+      {{/if}}
+    {{/if}}
+
+    {{#if updateSuccess}}
+      <p style="color: green;">Update successful!</p>
+    {{else}}
+      {{#if updateSuccess}}
+        <p style="color: red;">Update failed. Please try again.</p>
       {{/if}}
     {{/if}}
 

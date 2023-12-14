@@ -19,7 +19,10 @@ app.engine('handlebars', exphbs.engine({
     helpers: {
         eq: function (a, b) {
             return a === b;
-        }
+        },
+        not: function (value) {
+          return !value;
+        },
     }
 }));
 

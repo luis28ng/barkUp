@@ -6,7 +6,7 @@ import {checkId} from '../helpers.js';
 
 router.route('/').get(async (req, res) => {
     //code here for GET
-    res.render('review_form');
+    res.redirect('/')
   });
 
 router.route('/:id').get(async (req, res) => {
@@ -40,7 +40,18 @@ router.route('/:id').get(async (req, res) => {
   })
   .put(async (req,res) => {
     let reviewId = req.params.id;
+    let reviewTitle = req.body.updatedTitle;
+    let reviewDescription = req.body.updatedDescription;
+    let rating = parseInt(req.body.updatedRating);
     console.log(req.body)
+
+    try {
+      const updatedReview = await reviews.updateReview(reviewId,reviewTitle,rating,reviewDescription);
+      console.log(updatedReview)
+      res.status(200).render('review', { updateSuccess: true });
+    } catch (e) {
+      return res.status(404).render('review', { updateSuccess: false });
+    }
   })
 
 
