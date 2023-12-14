@@ -23,8 +23,8 @@ router.route('/:id').get(async (req, res) => {
     };
     
   })
-  .post(async (req,res) => {
-    let  reviewId = req.params.id
+  .delete(async (req,res) => {
+    let reviewId = req.params.id
     try {
       reviewId = checkId(reviewId, 'Review Id')
     } catch (e) {
@@ -37,6 +37,10 @@ router.route('/:id').get(async (req, res) => {
     } catch (e) {
       return res.status(404).render('review', { deletionSuccess: false });
     }
+  })
+  .put(async (req,res) => {
+    let reviewId = req.params.id;
+    console.log(req.body)
   })
 
 
