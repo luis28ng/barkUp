@@ -1,12 +1,12 @@
 <section>
-  <h2>Edit Store: {{store.storeName}}</h2>
+  <h2>Edit Store: {{petStore.storeName}}</h2>
   <form action="/admin/editStore/{{store.id}}" method="post">
     <label for="storeName">Store Name:</label>
     <input
       type="text"
       id="storeName"
       name="storeName"
-      value="{{store.storeName}}"
+      value="{{petStore.storeName}}"
       required
     />
 
@@ -15,7 +15,7 @@
       type="text"
       id="operationHours"
       name="operationHours"
-      value="{{store.operationHours}}"
+      value="{{petStore.operationHours}}"
       required
     />
 
@@ -26,7 +26,7 @@
         type="text"
         id="address"
         name="location[address]"
-        value="{{store.location.address}}"
+        value="{{petStore.location.address}}"
         required
       />
 
@@ -35,7 +35,7 @@
         type="text"
         id="city"
         name="location[city]"
-        value="{{store.location.city}}"
+        value="{{petStore.location.city}}"
         required
       />
 
@@ -44,7 +44,7 @@
         type="text"
         id="state"
         name="location[state]"
-        value="{{store.location.state}}"
+        value="{{petStore.location.state}}"
         required
       />
 
@@ -53,7 +53,7 @@
         type="text"
         id="zipCode"
         name="location[zipCode]"
-        value="{{store.location.zipCode}}"
+        value="{{petStore.location.zipCode}}"
         required
       />
     </fieldset>
@@ -63,7 +63,7 @@
       type="number"
       id="rating"
       name="rating"
-      value="{{store.rating}}"
+      value="{{petStore.rating}}"
       min="0"
       max="5"
       step="0.1"
@@ -74,13 +74,13 @@
   </form>
 
   <!-- Section to Manage Reviews for the Store -->
-  <h3>Manage Reviews for {{store.storeName}}</h3>
+  <h3>Manage Reviews for {{petStore.storeName}}</h3>
   <ul>
-    {{#each store.reviews}}
+    {{#each reviews}}
       <li>
-        <span>{{this.user}} - {{this.title}}</span>
-        <a href="/admin/editReview/{{this.id}}">Edit</a>
-        <a href="/admin/deleteReview/{{this.id}}">Delete</a>
+        <span>{{this.userId}} - {{this.reviewTitle}}</span>
+        <a href="/editReview/{{this._id}}">Edit</a>
+        <a href="/admin/deleteReview/{{this._id}}">Delete</a>
       </li>
     {{/each}}
   </ul>

@@ -1,4 +1,5 @@
 import { parks } from "../config/mongoCollections.js";
+import reviewData from "./reviews.js";
 import { ObjectId } from "mongodb";
 
 let exportedMethods = {
@@ -197,6 +198,10 @@ let exportedMethods = {
     id = id.trim();
     if (!ObjectId.isValid(id)) throw "Not a valid ID.";
     const parkCollection = await parks();
+    const park = await parkCollection.findOne({ _id: new ObjectId(id) });
+    for (const id of park.reviews) {
+      await reviewData.deleteReview(id);
+    }
     const deletionInfo = await parkCollection.findOneAndDelete({
       _id: new ObjectId(id),
     });
