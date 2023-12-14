@@ -1,26 +1,57 @@
 import { Router, json } from 'express';
 const router = Router();
 import reviews from '../data/reviews.js';
+import {checkId} from '../helpers.js';
 
 
 router.route('/').get(async (req, res) => {
     //code here for GET
-    res.render('review_form');
+    res.redirect('/')
   });
 
 router.route('/:id').get(async (req, res) => {
-    const reviewId = req.params.id
+    let reviewId = req.params.id
     try {
         const review = await reviews.getReviewById(reviewId)
         const reviewTitle = review.reviewTitle;
         const reviewDescription = review.reviewDescription;
         const rating = review.rating;
 
-        res.render('review', { reviewTitle, reviewDescription, rating })
+        res.render('review', { reviewTitle, reviewDescription, rating, reviewId })
     } catch (e) {
-        res.status(404).json(`No review found with ID: ${reviewId}`);
+        res.redirect('/')
     };
     
+  })
+  .delete(async (req,res) => {
+    let reviewId = req.params.id
+    try {
+      reviewId = checkId(reviewId, 'Review Id')
+    } catch (e) {
+      return res.status(404).render('review', { deletionSuccess: false });
+    };
+
+    try {
+      const deleteReview = await reviews.deleteReview(reviewId);
+      return res.status(200).render('review', { deletionSuccess: true });
+    } catch (e) {
+      return res.status(404).render('review', { deletionSuccess: false });
+    }
+  })
+  .put(async (req,res) => {
+    let reviewId = req.params.id;
+    let reviewTitle = req.body.updatedTitle;
+    let reviewDescription = req.body.updatedDescription;
+    let rating = parseInt(req.body.updatedRating);
+    console.log(req.body)
+
+    try {
+      const updatedReview = await reviews.updateReview(reviewId,reviewTitle,rating,reviewDescription);
+      console.log(updatedReview)
+      res.status(200).render('review', { updateSuccess: true });
+    } catch (e) {
+      return res.status(404).render('review', { updateSuccess: false });
+    }
   })
 
 

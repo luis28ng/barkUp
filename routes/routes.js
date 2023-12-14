@@ -14,7 +14,7 @@ import { validPark, validPetStore, validReview } from "../helpers.js";
 
 router.route("/").get(async (req, res) => {
   // Renders home page
-  return res.render("home", {});
+  return res.render("welcome", {});
 });
 
 router

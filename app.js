@@ -19,12 +19,14 @@ app.engine(
   exphbs.engine({
     defaultLayout: "main",
     helpers: {
-      eq: function (a, b) {
-        return a === b;
-      },
-    },
-  })
-);
+        eq: function (a, b) {
+            return a === b;
+        },
+        not: function (value) {
+          return !value;
+        },
+    }
+}));
 
 app.set("view engine", "handlebars");
 
@@ -33,9 +35,8 @@ app.use(
     name: "AuthState",
     secret: "some secret string!",
     resave: false,
-    saveUninitialized: false,
-  })
-);
+    saveUninitialized: false
+}))
 
 // This is where every route goes an logs the users information and data
 const neutralMiddleware = (req, res, next) => {
