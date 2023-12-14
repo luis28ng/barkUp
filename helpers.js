@@ -84,6 +84,17 @@ export const validRole = (role) => {
   return true;
 };
 
+export const validUser = (user) => {
+  if (user === null) {
+    return false;
+  }
+  if (user.trim() === '' || typeof user !== "string" || user.trim().length > 25) {
+    return false;
+  }
+  return true;
+};
+
+
 export const isAdmin = (role) => {
   if (role === "admin") {
     return true;
