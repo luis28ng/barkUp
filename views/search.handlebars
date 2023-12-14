@@ -6,10 +6,10 @@
         <li>
           <h3>{{this.name}}</h3>
           <p>{{this.description}}</p>
-          <p>Average Rating: {{this.averageRating}}</p>
+          <p> Rating: {{this.rating}}</p>
 
           <!-- Conditional link based on type (park or pet store) Will probably change -->
-          <a href="/{{this.type}}/{{this.id}}">View Details</a>
+          <a href="/{{type}}/{{this.id}}">View Details</a>
           <a href="/reviews/new?placeId={{this.id}}">Write a Review</a>
         </li>
       {{/each}}

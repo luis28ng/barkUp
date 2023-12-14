@@ -16,17 +16,24 @@
 <!-- Rating -->
 <p>Rating: {{rating}}</p>
 
+<!-- Add Review -->
+ <a href="/addReview/{{id}}">Write a Review for {{#if parkName}}{{parkName}}{{else}}{{storeName}}{{/if}}</a>
+
 <!-- Reviews Section -->
 <h3>Reviews:</h3>
 {{#each reviews}}
-    <div class="review">
+    <section class="review">
         <p>{{this.user}} says: "{{this.description}}"</p>
+        {{#if this.isCurrentUser}}
+            <a href="/editReview/{{this.id}}">Edit Your Review</a>
+        {{/if}}
         {{#if isAdmin}}
-            <a href="/admin/editReview/{{this.id}}">Edit Review</a>
+             <a href="/editReview/{{this.id}}">Edit Review</a>
             <a href="/admin/deleteReview/{{this.id}}">Delete Review</a>
         {{/if}}
-    </div>
+    </section>
 {{/each}}
+
 
 <!-- Admin Edit/Delete Links for Establishment -->
 {{#if isAdmin}}

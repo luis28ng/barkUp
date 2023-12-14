@@ -1,24 +1,27 @@
 <section>
   <h1>Welcome to BarkUp!</h1>
   <p>Discover the best parks and pet stores, as reviewed by pet lovers like you!</p>
-  <p>Your dogs will wag their tails in excitement for these parks!</p>
+  <p>Your dog is already wagging their tail in excitement!</p>
   <p class="fun-fact">"Did you know? Dogs have about 1,700 taste buds. Let's
     find them a tasty treat!"</p>
 </section>
 
 <!-- Search Functionality -->
-<section class="search-bar">
-  <form action="/search" method="get">
-    <label for="searchQuery">Search for Parks and Pet Stores:</label>
-    <input
-      type="text"
-      id="searchQuery"
-      name="query"
-      placeholder="Search dog parks or pet stores"
-    />
+<form method="POST" action="/search">
+    <label for="searchText">Dog Park or Pet Store Name: </label>
+    <input type="text" id="searchText" name="searchText" placeholder="Search for dog park or pet store by name..">
+
+    <label for="searchZip">Zip Code:</label>
+    <input type="text" id="searchZip" name="searchZip" placeholder="Zip Code">
+
+    <label for="type">Type:</label>
+    <select id="type" name="type">
+        <option value="park">Park</option>
+        <option value="store">Pet Store</option>
+    </select>
+
     <button type="submit">Search</button>
-  </form>
-</section>
+</form>
 
 <section class="top-rated-parks">
   <h2>Top Rated Parks</h2>
