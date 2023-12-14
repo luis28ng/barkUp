@@ -1,0 +1,36 @@
+<section>
+    <!-- Dynamic Header based on Establishment Type -->
+    <h2>{{#if parkName}}{{parkName}} - Pawsitively Paradise: Where Tails Never Stop Wagging!{{else}}{{storeName}} - Your One-Stop Shop for All Things Pet-tastic!{{/if}}</h2>
+
+    <!-- Location Details -->
+<p>Address: {{location.address}}</p>
+<p>City: {{location.city}}</p>
+<p>State: {{location.state}}</p>
+<p>Zip Code: {{location.zipCode}}</p>
+
+<!-- Operation Hours for Store -->
+{{#if storeName}}
+    <p>Operation Hours: {{operationHours}}</p>
+{{/if}}
+
+<!-- Rating -->
+<p>Rating: {{rating}}</p>
+
+<!-- Reviews Section -->
+<h3>Reviews:</h3>
+{{#each reviews}}
+    <div class="review">
+        <p>{{this.user}} says: "{{this.description}}"</p>
+        {{#if isAdmin}}
+            <a href="/admin/editReview/{{this.id}}">Edit Review</a>
+            <a href="/admin/deleteReview/{{this.id}}">Delete Review</a>
+        {{/if}}
+    </div>
+{{/each}}
+
+<!-- Admin Edit/Delete Links for Establishment -->
+{{#if isAdmin}}
+    <a href="/admin/edit{{#if parkName}}Park{{else}}Store{{/if}}/{{id}}">Edit</a>
+    <a href="/admin/delete{{#if parkName}}Park{{else}}Store{{/if}}/{{id}}">Delete</a>
+{{/if}}
+</section>

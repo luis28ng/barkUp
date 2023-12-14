@@ -1,14 +1,14 @@
 <section>
-  <h2>{{park.name}} - A Great Spot for Your Pets!</h2>
+  <h2>{{park.parkName}} - A Great Spot for Your Pets!</h2>
   <p>{{park.description}}</p>
   <p>Location: {{park.location}}</p>
   <!-- Add more park details as necessary -->
 
   <!-- Display reviews for the park -->
   <h3>Reviews:</h3>
-  {{#each park.reviews}}
+  {{#each reviews}}
     <div class="review">
-      <p>{{this.user}} says: "{{this.content}}"</p>
+      <p>{{this.userId}} says: "{{this.reviewTitle}}"</p>
     </div>
   {{/each}}
 

@@ -1,14 +1,16 @@
 <section>
-  <h2>{{petstore.name}} - Everything Your Pet Needs!</h2>
-  <p>{{petstore.description}}</p>
-  <p>Location: {{petstore.location}}</p>
+  <h2>{{petStore.storeName}} - Everything Your Pet Needs!</h2>
+  <p>{{petStore.description}}</p>
+  <p>Location: {{petStore.location}}</p>
+  <p>Open: {{petStore.operationHours.open}}</p>
+  <p>Close: {{petStore.operationHours.close}}</p>
   <!-- Add more pet store details as necessary -->
 
   <!-- Display reviews for the pet store -->
   <h3>Reviews:</h3>
-  {{#each petstore.reviews}}
+  {{#each reviews}}
     <div class="review">
-      <p>{{this.user}} says: "{{this.content}}"</p>
+      <p>{{this.userId}} says: "{{this.reviewDescription}}"</p>
     </div>
   {{/each}}
 
