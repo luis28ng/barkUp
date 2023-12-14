@@ -29,22 +29,23 @@
     </form>
   </section>
 
-   <!-- Search Results Display -->
-    {{#if searchResults}}
-        <section>
-            <h2>Search Results</h2>
-            <ul>
-                {{#each searchResults}}
-                    <li>
-                        <span>{{this.name}} - {{this.type}}</span>
-                        <a href="/admin/edit{{this.type | capitalize}}/{{this.id}}">Edit</a>
-                        <a href="/admin/delete{{this.type | capitalize}}/{{this.id}}">Delete</a>
-                    </li>
-                {{/each}}
-            </ul>
-        </section>
-    {{else}}
-        <p>No results found.</p>
-    {{/if}}
+<!-- Search Results Display -->
+{{#if searchResults.length}}
+    <section>
+        <h2>Search Results</h2>
+        <ul>
+            {{#each searchResults}}
+                <li>
+                    <span>{{name}} - {{#if parkName}}Park{{else}}Store{{/if}}</span>
+                    <a href="/admin/edit{{#if parkName}}Park{{else}}Store{{/if}}/{{id}}">Edit</a>
+                    <a href="/admin/delete{{#if parkName}}Park{{else}}Store{{/if}}/{{id}}">Delete</a>
+                </li>
+            {{/each}}
+        </ul>
+    </section>
+{{else}}
+    <p>Sorry, No results found.</p>
+{{/if}}
+
 
 </section>

@@ -1,0 +1,15 @@
+<section>
+  {{#if park}}
+    <h2>Delete Park</h2>
+    <p>Are you sure you want to delete the park: "{{park.parkName}}"?</p>
+    <form action="/admin/deletePark/{{park._id}}" method="post">
+      <button type="submit" class="delete-button">Delete Park</button>
+  {{else}}
+    <h2>Delete Store</h2>
+    <p>Are you sure you want to delete the store: "{{petStore.storeName}}"?</p>
+    <form action="/admin/deleteStore/{{petStore._id}}" method="post">
+      <button type="submit" class="delete-button">Delete Store</button>
+  {{/if}}
+    <a href="/admin" class="cancel-button">Cancel</a>
+  </form>
+</section>
