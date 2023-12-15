@@ -18,6 +18,15 @@
     />
   </div>
   <div>
+    <label for="userNameInput">User Name:</label>
+    <input
+      type="username"
+      id="userNameInput"
+      name="userNameInput"
+      required
+    />
+  </div>
+  <div>
     <label for="passwordInput">Password:</label>
     <input type="password" id="passwordInput" name="passwordInput" required />
   </div>
@@ -40,12 +49,14 @@
   <button type="submit">Sign Up</button>
 </form>
 
-{{#if errors}}
+{{!-- {{#if errors}}
   <section class="errors">
     {{#each errors}}
       <p>{{this}}</p>
     {{/each}}
   </section>
-{{/if}}
+{{/if}} --}}
+
+<div id="error" class="error">{{error}}</div>
 
 <p>Already have an account? <a href="/login">Click here to log-in</a></p>

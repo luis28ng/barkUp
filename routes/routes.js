@@ -6,7 +6,7 @@ import parkData from "../data/parks.js";
 import reviewData from "../data/reviews.js";
 import petStoreData from "../data/petStores.js";
 
-import { validPark, validPetStore, validReview } from "../helpers.js";
+import { validPark, validPetStore, validReview, validEmail, validFN, validLN, validPass, validRole, validUser } from "../helpers.js";
 
 // Probably will need some sort of helpers.js for error checking in routes
 // unless it's all taken care of in data functions
@@ -640,115 +640,126 @@ router.route("/error").get(async (req, res) => {
 });
 
 // Register Route
+// Register Route
 router
-  .route("/register")
+  .route('/register')
   .get(async (req, res) => {
     //code here for GET
-    return res.render("register", { title: "User Signup" });
+    try{
+      return res.status(200).render('register')
+    }
+    catch(e){
+      return res.status(400).render('error', {
+        error: e});
+    }
   })
   .post(async (req, res) => {
     //code here for POST
-    console.log(req.body);
-    let {
-      firstNameInput,
-      lastNameInput,
-      emailAddressInput,
-      passwordInput,
-      confirmPasswordInput,
-    } = req.body;
+    const firstName = req.body.firstNameInput.trim();
+    const lastName = req.body.lastNameInput.trim();
+    const emailAddress = req.body.emailAddressInput.toLowerCase();
+    const username = req.body.userNameInput.trim();
+    const password = req.body.passwordInput.trim();
+    const confirm = req.body.confirmPasswordInput.trim();
 
-    try {
-      firstNameInput = checkName(firstNameInput);
-      lastNameInput = checkName(lastNameInput);
-      emailAddressInput = checkEmail(emailAddressInput);
-      passwordInput = checkPassword(passwordInput);
-      confirmPasswordInput = checkString(confirmPasswordInput);
-
-      if (passwordInput !== confirmPasswordInput) {
-        throw new Error("Passwords must match");
-      }
-
-      roleInput = checkString(roleInput);
-      if (roleInput !== "admin" && roleInput !== "user") {
-        throw new Error("Account must be 'admin' or 'user' type");
-      }
-    } catch (e) {
-      return res.status(400).render("register", {
-        title: "User Signup",
-        statusCode: 400,
-        error: e,
-      });
+    if(!validFN(firstName)){
+      return res.status(400).render('register', {error: "Invalid First Name"})
     }
-    try {
-      const inserted = await userData.createUser(
-        firstNameInput,
-        lastNameInput,
-        emailAddressInput,
-        passwordInput,
-        roleInput
-      );
-      if ((inserted.insertedUser = true)) {
-        return res.redirect("/login");
-      } else {
-        return res.status(500).render("register", {
-          title: "User Signup",
-          statusCode: 500,
-          error: "Internal Service Error",
-        });
-      }
-    } catch (e) {
-      return res.status(400).render("register", {
-        title: "User Signup",
-        statusCode: 400,
-        error: e,
-      });
+    if(!validLN(lastName)){
+      return res.status(400).render('register', {error: "Invalid Last Name"})
     }
+    if(!validEmail(emailAddress)){
+      return res.status(400).render('register', { error: "Invalid Email"})
+    }
+    if(!validPass(password)){
+      return res.status(400).render('register', { error: "Password must be at least 8 characters long, have at least 1 uppercase letter, a number, and special character"})
+    }
+    if(!validUser(username)){
+      return res.status(400).render('register', {error: "Invalid Username"})
+    }
+
+    if(password !== confirm){
+      return res.status(400).render('register', {error: "Passwords do not match"})
+    }
+
+    try{
+    const newmail = emailAddress.toLowerCase();
+    const newuser = username.toLowerCase();
+    const getuser = await users();
+    const dupe = await getuser.findOne({emailAddress: newmail});
+    const dupeuser = await getuser.findOne({username: newuser});
+
+  if (dupe) {
+    return res.status(400).render('register', {error: "Email address already in use"})
+  }
+
+  if (dupeuser) {
+    return res.status(400).render('register', {error: "Username already in use"})
+  }
+}
+catch(e){
+  return res.status(400).render('error', {
+    error: e});
+}
+try{
+
+  const user = await userData.registerUser(req.body.firstNameInput, req.body.lastNameInput, req.body.emailAddressInput, req.body.userNameInput, req.body.passwordInput, req.body.roleInput);
+        if(!user.insertedUser){
+           return res.status(400).render('register', { error: user.error})
+}
+  return res.status(200).redirect('/login')
+}
+catch(e){
+  return res.status(500).render('error', {
+    error: 'Internal server error'});
+}
   });
+
+
+
 
 // Login route
 router
-  .route("/login")
+  .route('/login')
   .get(async (req, res) => {
     //code here for GET
-    return res.render("login", { title: "User Login" });
+      return res.render("login", { title: 'User Login' });
   })
   .post(async (req, res) => {
     //code here for POST
-    console.log(req.body);
-    let { emailAddressInput, passwordInput } = req.body;
-
-    try {
-      emailAddressInput = checkEmail(emailAddressInput);
-      passwordInput = checkPassword(passwordInput);
-    } catch (e) {
-      return res
-        .status(400)
-        .render("login", { title: "User Login", statusCode: 400, error: e });
+    const username = req.body.userNameInput.toLowerCase().trim();
+    const password = req.body.passwordInput.trim();
+    if(username === null || username === "" || password === null || password === ""){
+      return res.status(200).render('login', {error: "All fields are required"})
+    }
+    if(!validUser(username) || !validPass(password)){
+      return res.status(200).render('login', {error: "Invalid Username or Password"})
     }
 
-    try {
-      console.log("passed validation");
-      const user = await userData.checkUser(emailAddressInput, passwordInput);
-      req.session.user = user;
-
-      console.log("passed user check");
-      if (req.session.user.role === "admin") {
-        return res.redirect("/admin");
+    try{
+      const user = await userData.loginUser(username, password);
+      if (!user) {
+        return res.status(400).render('login', {error: "Invalid Username or Password"})
       }
-
-      return res.redirect("/protected");
-    } catch (e) {
-      return res
-        .status(400)
-        .render("login", { title: "User Login", statusCode: 400, error: e });
+      req.session.user = {firstName: user.firstName, lastName: user.lastName, emailAddress: user.emailAddress, username: user.username, role: user.role}
+      if (user.role === 'admin') {
+        return res.redirect('/admin_panel');
+    } else {
+        return res.redirect('/');
+    }
+    }
+    catch(e){
+      return res.status(400).render('error', {
+        error: e});
     }
   });
 
 // Logout route for users to log out
-router.route("/logout").get(async (req, res) => {
+router.route('/logout').get(async (req, res) => {
   //code here for GET
-  req.session.destroy();
-  return res.render("logout", { title: "Logged Out." });
+    req.session.destroy();
+    return res.render("/welcome");
+
 });
 
 export default router;

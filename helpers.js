@@ -51,6 +51,17 @@ export const validEmail = (emailAddress) => {
   return true;
 };
 
+export const validUser = (user) => {
+  if (user === null) {
+    return false;
+  }
+  if (user.trim() === '' || typeof user !== "string" || user.trim().length > 25) {
+    return false;
+  }
+  return true;
+};
+
+
 export const validPass = (password) => {
   if (password === null) {
     return false;
