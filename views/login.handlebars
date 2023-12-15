@@ -19,13 +19,15 @@
     </div>
   </form>
 
-  {{#if errors}}
+  {{!-- {{#if errors}}
     <section class="errors">
       {{#each errors}}
         <p>{{this}}</p>
       {{/each}}
     </section>
-  {{/if}}
+  {{/if}} --}}
+  
+<div id="error" class="error">{{error}}</div>
 </section>
 
 <p> Don't have an account? <a href="/register">Click here to register!</a></p>
