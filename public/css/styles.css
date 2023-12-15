@@ -1,0 +1,119 @@
+body {
+  font-family: 'Architects Daughter';
+  line-height: 1.8;
+  color: #400000;
+  background-color: #FFF5EB;
+  margin: 0;
+}
+
+a, label {
+  font-family: 'Architects Daughter';
+  color: #355E3B;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+a:hover {
+  color: #A00000;
+}
+
+header, footer {
+  background-color: #013220;
+  color: #FFF5EB;
+  padding: 1.5rem 0;
+  text-align: center;
+  font-size: 1.2rem;
+}
+
+header a, footer a, header p, footer p {
+  letter-spacing: 0.05em;
+  text-shadow: 1px 1px 2px #000;
+}
+
+nav ul {
+  display: flex;
+  justify-content: space-around;
+}
+
+nav ul li {
+  list-style-type: none;
+}
+
+nav a {
+  color: #FFF5EB;
+  padding: 0.5rem 1rem;
+  display: block;
+}
+
+section {
+  margin: 1rem auto;
+  padding: 1rem;
+  background-color: #D3BECF;
+  border-radius: 8px;
+  width: 90%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+form {
+  background-color: #EAD7D1;
+  padding: 2rem;
+  margin-top: 1rem;
+  border-radius: 8px;
+}
+
+input[type="text"],
+input[type="username"],
+input[type="password"],
+input[type="email"],
+input[type="number"],
+select,
+textarea {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 2px solid #800000;
+  border-radius: 15px;
+  background-color: #FFF5EB;
+  color: #5D3A00;
+  font-family: 'Architects Daughter';
+  font-size: 1.1rem;
+}
+
+input[type="submit"], button {
+  background-color: #800000;
+  color: #FFF5EB;
+  border: none;
+  padding: 1rem 2rem;
+  cursor: pointer;
+  border-radius: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  font-family: 'Architects Daughter';
+}
+
+input[type="submit"]:hover, button:hover {
+  background-color: #A00000;
+}
+
+.error {
+  color: #A52A2A;
+  font-family: 'Architects Daughter';
+}
+
+@media (max-width: 768px) {
+  nav ul {
+    flex-direction: column;
+  }
+}
+
+.h2, .h3 {
+  color: #800000;
+  font-family: 'Architects Daughter';
+}
+
+.review, .top-rated-parks, .popular-pet-stores {
+  border-left: 5px solid #800000;
+}
+
+.top-rated-parks, .popular-pet-stores {
+  background-color: #A0C4A7;
+}
