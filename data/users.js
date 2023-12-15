@@ -102,8 +102,11 @@ return {insertedUser: true};
     if(!match){
       throw new Error("Either the username or password is invalid");
     }
+
+    const userId = user._id.toString()
     
     const result = {
+      userId: userId,
       firstName: user.firstName,
       lastName: user.lastName,
       emailAddress: user.emailAddress,

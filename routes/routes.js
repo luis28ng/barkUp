@@ -93,16 +93,16 @@ router
   });
 
 // Review
-router
-  .route("/addReview/:id")
-  .get(async (req, res) => {
-    //code here for GET
-    return res.render();
-  })
-  .post(async (req, res) => {
-    //code here for POST
-    console.log(req.body);
-  });
+// router
+//   .route("/addReview/:id")
+//   .get(async (req, res) => {
+//     //code here for GET
+//     return res.render();
+//   })
+//   .post(async (req, res) => {
+//     //code here for POST
+//     console.log(req.body);
+//   });
 
 // Profile
 router
@@ -117,62 +117,62 @@ router
   });
 
 // Edit Review
-router
-  .route("/editReview/:id")
-  .get(async (req, res) => {
-    //code here for GET
-    let id = req.params.id;
-    try {
-      if (typeof id !== "string") {
-        throw "ID must be a string.";
-      }
-      id = id.trim();
-      if (!ObjectId.isValid(id)) throw "Not a valid ID.";
-    } catch (error) {
-      return res.status(400).render("error", { error: error });
-    }
-    let review;
-    try {
-      review = await reviewData.getReviewById(id);
-    } catch (error) {
-      return res.status(400).render("error", { error: error });
-    }
-    return res.render("edit_review", { review: review });
-  })
-  .post(async (req, res) => {
-    //code here for POST
-    let reviewInfo = req.body;
-    let id = req.params.id;
-    let reviewTitle = reviewInfo.reviewTitle;
-    let rating = reviewInfo.rating;
-    let reviewDescription = reviewInfo.reviewDescription;
-    try {
-      if (typeof id !== "string") {
-        throw "ID must be a string.";
-      }
-      id = id.trim();
-      if (!ObjectId.isValid(id)) throw "Not a valid ID.";
-    } catch (error) {
-      return res.status(400).render("error", { error: error });
-    }
-    try {
-      validReview(reviewTitle, rating, reviewDescription);
-    } catch (error) {
-      return res.status(400).render("edit_review", { error: error });
-    }
-    let review;
-    try {
-      review = await reviewData.updateReview(
-        id,
-        reviewTitle,
-        rating,
-        reviewDescription
-      );
-    } catch (error) {
-      return res.status(400).render("edit_review", { error: error });
-    }
-    return res.redirect("/admin");
-  });
+// router
+//   .route("/editReview/:id")
+//   .get(async (req, res) => {
+//     //code here for GET
+//     let id = req.params.id;
+//     try {
+//       if (typeof id !== "string") {
+//         throw "ID must be a string.";
+//       }
+//       id = id.trim();
+//       if (!ObjectId.isValid(id)) throw "Not a valid ID.";
+//     } catch (error) {
+//       return res.status(400).render("error", { error: error });
+//     }
+//     let review;
+//     try {
+//       review = await reviewData.getReviewById(id);
+//     } catch (error) {
+//       return res.status(400).render("error", { error: error });
+//     }
+//     return res.render("edit_review", { review: review });
+//   })
+//   .post(async (req, res) => {
+//     //code here for POST
+//     let reviewInfo = req.body;
+//     let id = req.params.id;
+//     let reviewTitle = reviewInfo.reviewTitle;
+//     let rating = reviewInfo.rating;
+//     let reviewDescription = reviewInfo.reviewDescription;
+//     try {
+//       if (typeof id !== "string") {
+//         throw "ID must be a string.";
+//       }
+//       id = id.trim();
+//       if (!ObjectId.isValid(id)) throw "Not a valid ID.";
+//     } catch (error) {
+//       return res.status(400).render("error", { error: error });
+//     }
+//     try {
+//       validReview(reviewTitle, rating, reviewDescription);
+//     } catch (error) {
+//       return res.status(400).render("edit_review", { error: error });
+//     }
+//     let review;
+//     try {
+//       review = await reviewData.updateReview(
+//         id,
+//         reviewTitle,
+//         rating,
+//         reviewDescription
+//       );
+//     } catch (error) {
+//       return res.status(400).render("edit_review", { error: error });
+//     }
+//     return res.redirect("/admin");
+//   });
 
 // Admin Edit Park
 router
@@ -641,7 +641,6 @@ router.route("/error").get(async (req, res) => {
 });
 
 // Register Route
-// Register Route
 router
   .route('/register')
   .get(async (req, res) => {
@@ -742,9 +741,9 @@ router
       if (!user) {
         return res.status(400).render('login', {error: "Invalid Username or Password"})
       }
-      req.session.user = {firstName: user.firstName, lastName: user.lastName, emailAddress: user.emailAddress, username: user.username, role: user.role}
+      req.session.user = {firstName: user.firstName, lastName: user.lastName, emailAddress: user.emailAddress, username: user.username, role: user.role, userId: user.userId}
       if (user.role === 'admin') {
-        return res.redirect('/admin_panel');
+        return res.redirect('/admin');
     } else {
         return res.redirect('/');
     }
@@ -759,7 +758,8 @@ router
 router.route('/logout').get(async (req, res) => {
   //code here for GET
     req.session.destroy();
-    return res.render("/welcome");
+    res.clearCookie('AuthState');
+    res.redirect("/");
 
 });
 

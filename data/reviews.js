@@ -116,6 +116,24 @@ let exportedMethods = {
       reviewDescription: reviewDescription,
     };
 
+    let reviewsByUser = null;
+    let placeIdArray = [];
+
+    try {
+      reviewsByUser = await reviewsCollection
+        .find({
+          userId: userId,
+        })
+        .toArray();
+      placeIdArray = reviewsByUser.map(review => review.placeId);
+    } catch (e) {}
+
+    const isPlaceIdInArray = placeIdArray.includes(placeId)
+
+    if (isPlaceIdInArray) {
+      throw "You can only create one review per place per user, you already have a review for this place."
+    }
+
     const response = await reviewsCollection.insertOne(reviewObject);
 
     if (!response.acknowledged || !response.insertedId) {
