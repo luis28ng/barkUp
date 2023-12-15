@@ -5,6 +5,7 @@ import userData from "../data/users.js";
 import parkData from "../data/parks.js";
 import reviewData from "../data/reviews.js";
 import petStoreData from "../data/petStores.js";
+import { users } from "../config/mongoCollections.js";
 
 import { validPark, validPetStore, validReview, validEmail, validFN, validLN, validPass, validRole, validUser } from "../helpers.js";
 
