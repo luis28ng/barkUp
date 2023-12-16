@@ -39,6 +39,27 @@
       required
     />
   </div>
+
+<div>
+  <label for="petNameInput">Pet Name:</label>
+  <input type="text" id="petNameInput" name="petNameInput" />
+</div>
+<div>
+  <label for="petBreedSelect">Pet Breed:</label>
+  <select id="petBreedSelect" name="petBreedSelect"></select>
+</div>
+<div>
+  <label for="petDOBInput">Pet Date of Birth:</label>
+  <input type="date" id="petDOBInput" name="petDOBInput" />
+</div>
+<div>
+  <label for="petGenderSelect">Pet Gender:</label>
+  <select id="petGenderSelect" name="petGenderSelect">
+    <option value="male">Male</option>
+    <option value="female">Female</option>
+  </select>
+</div>
+
   <div>
     <label for="roleInput">Role:</label>
     <select id="roleInput" name="roleInput" required>
@@ -60,3 +81,5 @@
 <div id="error" class="error">{{error}}</div>
 
 <p>Already have an account? <a href="/login">Click here to log-in</a></p>
+
+<script src="../public/js/dogBreeds.js"></script> <!-- Link to AJAX script -->
