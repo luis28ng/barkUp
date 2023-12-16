@@ -17,7 +17,7 @@ router
       const pets = await petData.getAllPets(req.params.id);
       return res.render();
     } catch (e) {
-      return res.status(404).json({error: e});
+      return res.status(404).render('user_profile');
     }
   })
   .post(async (req, res) => {
@@ -27,7 +27,7 @@ router
     if (!petInfo || Object.keys(petInfo).length === 0) {
       return res
           .status(400)
-          .json({error: 'There are no fields in the request body'});
+          .render('user_profile');
     }
 
     // Check and trim URL parameters
@@ -45,7 +45,7 @@ router
       const userInfo = await petData.createPet(req.params.id, petInfo.petName, petInfo.petType, petInfo.petBreed);
       res.status(200).render('user_profile', {});
     } catch (e) {
-      res.status(404).json({error: e});
+      res.status(404).render('user_profile');
     }
   });
 
@@ -61,7 +61,7 @@ router
       const petInfo = await petData.getPet(req.params.id);
       return res.json(petInfo);
     } catch (e) {
-      return res.status(404).json({error: e});
+      return res.status(404).render('user_profile')
     }
   })
   .delete(async (req, res) => {
@@ -74,7 +74,7 @@ router
       const petInfo = await petData.removePet(req.params.id);
       return res.render('user_profile');
     } catch (e) {
-      return res.status(404).json({error: e});
+      return res.status(404).render('user_profile');
     }
   });
 
