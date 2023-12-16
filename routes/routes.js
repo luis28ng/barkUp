@@ -108,8 +108,12 @@ router
 router
   .route("/profile")
   .get(async (req, res) => {
-    //code here for GET
-    return res.render();
+    //code here for GET 
+    return res.render("user_profile", {
+    firstName: req.session.user.firstName,
+    lastName: req.session.user.lastName
+    });
+    
   })
   .post(async (req, res) => {
     //code here for POST
