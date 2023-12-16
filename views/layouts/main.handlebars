@@ -17,8 +17,12 @@
           <li><a href="/parks">Parks</a></li>
           <li><a href="/petstores">Pet Stores</a></li>
           <li><a href="/profile">My Profile</a></li>
+          {{#if tfAuth}}
+          <li><a href="/logout">Logout</a></li>
+          {{else}}
           <li><a href="/login">Login</a></li>
           <li><a href="/register">Register</a></li>
+          {{/if}}
           <!-- temporary/add more links as needed -->
         </ul>
       </nav>

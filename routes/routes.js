@@ -15,7 +15,8 @@ import { validPark, validPetStore, validReview, validEmail, validFN, validLN, va
 
 router.route("/").get(async (req, res) => {
   // Renders home page
-  return res.render("welcome", {});
+  const tfAuth = !!req.session.user;
+  return res.render("welcome", { tfAuth: tfAuth});
 });
 
 router
