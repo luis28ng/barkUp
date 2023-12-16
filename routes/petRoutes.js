@@ -9,13 +9,10 @@ router
   .route('/:id')
   .get(async (req, res) => {
     //code here for GET
-    // Ensure that user id is a valid
-    if (!ObjectId.isValid(req.params.id)) return res.status(400).json({error: "User ID parameter is invalid"});
-
     // Try to get the pets
     try {
-      const pets = await petData.getAllPets(req.params.id);
-      return res.render();
+      const pets = await petData.getAllPets(req.session.user.userId);
+      return res.render('user_profile', {pets: pets});
     } catch (e) {
       return res.status(404).render('user_profile');
     }
@@ -23,7 +20,7 @@ router
   .post(async (req, res) => {
     //code here for POST
     let petInfo = req.body;
-    // make sure there is something request params have values
+    // make sure request params have values
     if (!petInfo || Object.keys(petInfo).length === 0) {
       return res
           .status(400)
@@ -37,42 +34,39 @@ router
 
     if (!petInfo.petName || !petInfo.petType || !petInfo.petBreed) throw "Please supply a pet name, pet type, and pet breed."
 
-    // Check eventId URL parameter
-    if (!ObjectId.isValid(req.params.id)) return res.status(400).json({error: "Invalid event ID parameter"});
-
-    // Create the attendee
     try {
-      const userInfo = await petData.createPet(req.params.id, petInfo.petName, petInfo.petType, petInfo.petBreed);
-      res.status(200).render('user_profile', {});
+      const userPets = await petData.createPet(req.session.user.userId, petInfo.petName, petInfo.petType, petInfo.petBreed);
+      res.status(200).render('user_profile', {pets: userPets});
     } catch (e) {
       res.status(404).render('user_profile');
     }
   });
 
 router
-  .route('/attendee/:id')
+  .route('/pet/:id')
   .get(async (req, res) => {
     //code here for GET
-    // Ensure attendee id is a valid object id
-    if (!ObjectId.isValid(req.params.id)) return res.status(400).json({error: "Attendee ID URL parameter is not a valid object ID"});
-
-    // Get attendee info
+    let petId = req.params.id;
     try {
-      const petInfo = await petData.getPet(req.params.id);
-      return res.json(petInfo);
+        petId = checkId(petId, 'Pet ID');
+    } catch (e) {
+        return res.status(404).render('user_profile');
+    }
+
+    try {
+      const petInfo = await petData.getPet(petId);
+      return res.status(200).render('user_profile');
     } catch (e) {
       return res.status(404).render('user_profile')
     }
   })
   .delete(async (req, res) => {
     //code here for DELETE
-    // Ensure attendee id is a valid object id
-    if (!ObjectId.isValid(req.params.id)) return res.status(400).json({error: "Attendee ID URL parameter is not a valid object ID"});
-
-    // Get attendee info
+    let petId = req.params.id;
+    petId = checkId(petId, 'Pet ID');
     try {
-      const petInfo = await petData.removePet(req.params.id);
-      return res.render('user_profile');
+      const deletePet = await petData.removePet(petId);
+      return res.render('user_profile', {pets: deletePet.pets});
     } catch (e) {
       return res.status(404).render('user_profile');
     }
