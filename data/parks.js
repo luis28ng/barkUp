@@ -464,6 +464,13 @@ let exportedMethods = {
     }
     return updatedInfo;
   },
+
+  async topRated() {
+    const parkCollection = await parks();
+    let parkList = await parkCollection.find({}).sort({rating:-1}).limit(3).toArray();
+    if (!parkList) throw "Could not get parks.";
+    return parkList;
+  }
 };
 
 export default exportedMethods;

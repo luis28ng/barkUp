@@ -36,9 +36,9 @@
         <ul>
             {{#each searchResults}}
                 <li>
-                    <span>{{name}} - {{#if parkName}}Park{{else}}Store{{/if}}</span>
-                    <a href="/admin/edit{{#if parkName}}Park{{else}}Store{{/if}}/{{id}}">Edit</a>
-                    <a href="/admin/delete{{#if parkName}}Park{{else}}Store{{/if}}/{{id}}">Delete</a>
+                    <span>{{#if this.parkName}}{{this.parkName}}{{else}}{{this.storeName}}{{/if}}</span>
+                    <a href="/admin/edit{{#if parkName}}Park{{else}}Store{{/if}}/{{this._id}}">Edit</a>
+                    <a href="/admin/delete{{#if parkName}}Park{{else}}Store{{/if}}/{{this._id}}">Delete</a>
                 </li>
             {{/each}}
         </ul>

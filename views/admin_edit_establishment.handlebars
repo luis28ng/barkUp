@@ -83,13 +83,17 @@
 
 <!-- Section to Manage Reviews -->
 <h3>Manage Reviews for {{#if park}}{{park.parkName}}{{else}}{{petStore.storeName}}{{/if}}</h3>
+{{#if reviews.length}}
 <ul>
   {{#each reviews}}
     <li>
-      <span>{{this.user}} - {{this.title}}</span>
-      <a href="/admin/editReview/{{this._id}}">Edit</a>
+      <span>{{this.reviewTitle}}</span>
+      <a href="/review/{{this._id}}">Edit</a>
       <a href="/admin/deleteReview/{{this._id}}">Delete</a>
     </li>
   {{/each}}
 </ul>
+{{else}}
+<p>No reviews yet.</p>
+{{/if}}
 </section>

@@ -1,43 +1,62 @@
 <section>
     <!-- Dynamic Header based on Establishment Type -->
-    <h2>{{#if parkName}}{{parkName}} - Pawsitively Paradise: Where Tails Never Stop Wagging!{{else}}{{storeName}} - Your One-Stop Shop for All Things Pet-tastic!{{/if}}</h2>
+    <h2>{{#if park}}{{park.parkName}} - Pawsitively Paradise: Where Tails Never Stop Wagging!{{else}}{{petStore.storeName}} - Your One-Stop Shop for All Things Pet-tastic!{{/if}}</h2>
 
     <!-- Location Details -->
-<p>Address: {{location.address}}</p>
-<p>City: {{location.city}}</p>
-<p>State: {{location.state}}</p>
-<p>Zip Code: {{location.zipCode}}</p>
-
+{{#if park}}
+<p>Address: {{park.location.address}}</p>
+<p>City: {{park.location.city}}</p>
+<p>State: {{park.location.state}}</p>
+<p>Zip Code: {{park.location.zipCode}}</p>
+{{else}}
+<p>Address: {{petStore.location.address}}</p>
+<p>City: {{petStore.location.city}}</p>
+<p>State: {{petStore.location.state}}</p>
+<p>Zip Code: {{petStore.location.zipCode}}</p>
+{{/if}}
 <!-- Operation Hours for Store -->
-{{#if storeName}}
-    <p>Operation Hours: {{operationHours}}</p>
+{{#if petStore}}
+    <p>Operation Hours: </p>
+    <p>Open: {{petStore.operationHours.open}}</p>
+    <p>Close: {{petStore.operationHours.close}}</p>
 {{/if}}
 
 <!-- Rating -->
-<p>Rating: {{rating}}</p>
-
+{{#if park}}
+<p>Rating: {{park.rating}}</p>
+{{else}}
+<p>Rating: {{petStore.rating}}</p>
+{{/if}}
 <!-- Add Review -->
- <a href="/addReview/{{id}}">Write a Review for {{#if parkName}}{{parkName}}{{else}}{{storeName}}{{/if}}</a>
-
+{{#if park}}
+ <a href="/review/addReview/{{park._id}}">Write a Review for {{park.parkName}}</a>
+{{else}}
+<a href="/review/addReview/{{petStore._id}}">Write a Review for {{petStore.storeName}}</a>
+{{/if}}
 <!-- Reviews Section -->
 <h3>Reviews:</h3>
+{{#if reviews.length}}
 {{#each reviews}}
     <section class="review">
-        <p>{{this.user}} says: "{{this.description}}"</p>
+        <h4>{{this.reviewTitle}}</h4><h4>Rating: {{this.rating}}/5</h4>
+        <p>{{this.reviewDescription}}</p>
         {{#if this.isCurrentUser}}
-            <a href="/editReview/{{this.id}}">Edit Your Review</a>
+            <a href="/editReview/{{this._id}}">Edit Your Review</a>
         {{/if}}
         {{#if isAdmin}}
-             <a href="/editReview/{{this.id}}">Edit Review</a>
-            <a href="/admin/deleteReview/{{this.id}}">Delete Review</a>
+             <a href="/editReview/{{this._id}}">Edit Review</a>
+            <a href="/admin/deleteReview/{{this._id}}">Delete Review</a>
         {{/if}}
     </section>
 {{/each}}
+{{else}}
+  <p>No reviews yet.</p>
+{{/if}}
 
 
 <!-- Admin Edit/Delete Links for Establishment -->
 {{#if isAdmin}}
-    <a href="/admin/edit{{#if parkName}}Park{{else}}Store{{/if}}/{{id}}">Edit</a>
-    <a href="/admin/delete{{#if parkName}}Park{{else}}Store{{/if}}/{{id}}">Delete</a>
+    <a href="/admin/edit{{#if parkName}}Park{{else}}Store{{/if}}/{{id}}">Edit Location</a>
+    <a href="/admin/delete{{#if parkName}}Park{{else}}Store{{/if}}/{{id}}">Delete Location</a>
 {{/if}}
 </section>

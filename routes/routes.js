@@ -7,7 +7,17 @@ import reviewData from "../data/reviews.js";
 import petStoreData from "../data/petStores.js";
 import { users } from "../config/mongoCollections.js";
 
-import { validPark, validPetStore, validReview, validEmail, validFN, validLN, validPass, validRole, validUser } from "../helpers.js";
+import {
+  validPark,
+  validPetStore,
+  validReview,
+  validEmail,
+  validFN,
+  validLN,
+  validPass,
+  validRole,
+  validUser,
+} from "../helpers.js";
 
 // Probably will need some sort of helpers.js for error checking in routes
 // unless it's all taken care of in data functions
@@ -16,7 +26,19 @@ import { validPark, validPetStore, validReview, validEmail, validFN, validLN, va
 router.route("/").get(async (req, res) => {
   // Renders home page
   const tfAuth = !!req.session.user;
-  return res.render("welcome", { tfAuth: tfAuth});
+  let parks;
+  let stores
+  try {
+    parks = await parkData.topRated()
+  } catch (error) {
+    return res.status(500).render("welcome", { error: error });
+  }
+  try {
+    stores = await petStoreData.topRated()
+  } catch (error) {
+    return res.status(500).render("welcome", { error: error });
+  }
+  return res.render("welcome", { tfAuth: tfAuth, parks:parks, stores:stores });
 });
 
 router
@@ -78,7 +100,11 @@ router
       return res.status(500).render("search", { error: error });
     }
 
-    return res.render("search", { results, type: type, searchQuery: searchText });
+    return res.render("search", {
+      results,
+      type: type,
+      searchQuery: searchText,
+    });
   });
 
 // Location
@@ -109,12 +135,11 @@ router
 router
   .route("/profile")
   .get(async (req, res) => {
-    //code here for GET 
+    //code here for GET
     return res.render("user_profile", {
-    firstName: req.session.user.firstName,
-    lastName: req.session.user.lastName
+      firstName: req.session.user.firstName,
+      lastName: req.session.user.lastName,
     });
-    
   })
   .post(async (req, res) => {
     //code here for POST
@@ -220,26 +245,29 @@ router
       return res.status(400).render("admin_panel", { error: error });
     }
 
-    let results = null;
+    let searchResults = null;
     try {
       if (type === "store") {
         if (searchText || searchZip) {
-          results = await petStoreData.searchPetStores([searchText, searchZip]);
+          searchResults = await petStoreData.searchPetStores([
+            searchText,
+            searchZip,
+          ]);
         } else {
-          results = await petStoreData.getAllPetStores();
+          searchResults = await petStoreData.getAllPetStores();
         }
       } else if (type === "park") {
         if (searchText || searchZip) {
-          results = await parkData.searchParks([searchText, searchZip]);
+          searchResults = await parkData.searchParks([searchText, searchZip]);
         } else {
-          results = await parkData.getAllParks();
+          searchResults = await parkData.getAllParks();
         }
       }
     } catch (error) {
       return res.status(500).render("admin_panel", { error: error });
     }
 
-    return res.render("admin_panel", { results });
+    return res.render("admin_panel", { searchResults });
   });
 
 router
@@ -269,16 +297,20 @@ router
     } catch (error) {
       return res.status(400).render("error", { error: error });
     }
-     // Add isAdmin flag
-     const isAdmin = req.session.user && req.session.user.role === 'admin';
+    // Add isAdmin flag
+    const isAdmin = req.session.user && req.session.user.role === "admin";
 
-     // Add isCurrentUser flag to each review
-     reviews.forEach(review => {
-         review.isCurrentUser = req.session.user && review.userId === req.session.user._id;
+    // Add isCurrentUser flag to each review
+    reviews.forEach((review) => {
+      review.isCurrentUser =
+        req.session.user && review.userId === req.session.user._id;
+    });
 
-     });
-
-    return res.render("establishment", { park: park, reviews: reviews , isAdmin: isAdmin});
+    return res.render("establishment", {
+      park: park,
+      reviews: reviews,
+      isAdmin: isAdmin,
+    });
   })
   .post(async (req, res) => {
     //code here for POST
@@ -311,18 +343,18 @@ router
     } catch (error) {
       return res.status(400).render("error", { error: error });
     }
-      // Add isAdmin flag
-      const isAdmin = req.session.user && req.session.user.role === 'admin';
+    // Add isAdmin flag
+    const isAdmin = req.session.user && req.session.user.role === "admin";
 
-      // Add isCurrentUser flag to each review
-      reviews.forEach(review => {
-          review.isCurrentUser = req.session.user && review.userId === req.session.user._id;
-
-      });
+    // Add isCurrentUser flag to each review
+    reviews.forEach((review) => {
+      review.isCurrentUser =
+        req.session.user && review.userId === req.session.user._id;
+    });
     return res.render("establishment", {
       petStore: petStore,
       reviews: reviews,
-      isAdmin: isAdmin
+      isAdmin: isAdmin,
     });
   })
   .post(async (req, res) => {
@@ -333,7 +365,7 @@ router
 router
   .route("/admin/addPark")
   .get(async (req, res) => {
-    return res.render("admin_add_establishment", {addingPark: true});
+    return res.render("admin_add_establishment", { addingPark: true });
   })
   .post(async (req, res) => {
     let parkInfo = req.body;
@@ -343,13 +375,17 @@ router
     try {
       validPark(parkName, location);
     } catch (error) {
-      return res.status(400).render("admin_add_establishment", { error: error });
+      return res
+        .status(400)
+        .render("admin_add_establishment", { error: error });
     }
     let park;
     try {
       park = await parkData.createPark(parkName, location);
     } catch (error) {
-      return res.status(400).render("admin_add_establishment", { error: error });
+      return res
+        .status(400)
+        .render("admin_add_establishment", { error: error });
     }
     return res.redirect(`/admin/park/${park._id}`);
   });
@@ -357,7 +393,7 @@ router
 router
   .route("/admin/addStore")
   .get(async (req, res) => {
-    return res.render("admin_add_establishment", {addingPark: false});
+    return res.render("admin_add_establishment", { addingPark: false });
   })
   .post(async (req, res) => {
     let petStoreInfo = req.body;
@@ -368,7 +404,9 @@ router
     try {
       validPetStore(storeName, operationHours, location);
     } catch (error) {
-      return res.status(400).render("admin_add_establishment", { error: error });
+      return res
+        .status(400)
+        .render("admin_add_establishment", { error: error });
     }
     let petStore;
     try {
@@ -378,7 +416,9 @@ router
         location
       );
     } catch (error) {
-      return res.status(400).render("admin_add_establishment", { error: error });
+      return res
+        .status(400)
+        .render("admin_add_establishment", { error: error });
     }
     return res.redirect(`/admin/store/${petStore._id}`);
   });
@@ -413,7 +453,10 @@ router
       reviews[i]._id = reviews[i]._id.toString();
     }
     //Will render form with all park information filled in
-    return res.render("admin_edit_establishment", { park: park, reviews: reviews });
+    return res.render("admin_edit_establishment", {
+      park: park,
+      reviews: reviews,
+    });
   })
   .post(async (req, res) => {
     //code here for POST
@@ -433,13 +476,17 @@ router
     try {
       validPark(parkName, location);
     } catch (error) {
-      return res.status(400).render("admin_edit_establishment", { error: error });
+      return res
+        .status(400)
+        .render("admin_edit_establishment", { error: error });
     }
     let park;
     try {
       park = await parkData.updatePark(id, parkName, location);
     } catch (error) {
-      return res.status(400).render("admin_edit_establishment", { error: error });
+      return res
+        .status(400)
+        .render("admin_edit_establishment", { error: error });
     }
     return res.redirect(`/admin/park/${park._id}`);
   });
@@ -510,7 +557,9 @@ router
         location
       );
     } catch (error) {
-      return res.status(500).render("admin_edit_establishment", { error: error });
+      return res
+        .status(500)
+        .render("admin_edit_establishment", { error: error });
     }
     return res.redirect(`/admin/store/${petStore._id}`);
   });
@@ -647,15 +696,15 @@ router.route("/error").get(async (req, res) => {
 
 // Register Route
 router
-  .route('/register')
+  .route("/register")
   .get(async (req, res) => {
     //code here for GET
-    try{
-      return res.status(200).render('register')
-    }
-    catch(e){
-      return res.status(400).render('error', {
-        error: e});
+    try {
+      return res.status(200).render("register");
+    } catch (e) {
+      return res.status(400).render("error", {
+        error: e,
+      });
     }
   })
   .post(async (req, res) => {
@@ -667,105 +716,136 @@ router
     const password = req.body.passwordInput.trim();
     const confirm = req.body.confirmPasswordInput.trim();
 
-    if(!validFN(firstName)){
-      return res.status(400).render('register', {error: "Invalid First Name"})
+    if (!validFN(firstName)) {
+      return res
+        .status(400)
+        .render("register", { error: "Invalid First Name" });
     }
-    if(!validLN(lastName)){
-      return res.status(400).render('register', {error: "Invalid Last Name"})
+    if (!validLN(lastName)) {
+      return res.status(400).render("register", { error: "Invalid Last Name" });
     }
-    if(!validEmail(emailAddress)){
-      return res.status(400).render('register', { error: "Invalid Email"})
+    if (!validEmail(emailAddress)) {
+      return res.status(400).render("register", { error: "Invalid Email" });
     }
-    if(!validPass(password)){
-      return res.status(400).render('register', { error: "Password must be at least 8 characters long, have at least 1 uppercase letter, a number, and special character"})
+    if (!validPass(password)) {
+      return res.status(400).render("register", {
+        error:
+          "Password must be at least 8 characters long, have at least 1 uppercase letter, a number, and special character",
+      });
     }
-    if(!validUser(username)){
-      return res.status(400).render('register', {error: "Invalid Username"})
+    if (!validUser(username)) {
+      return res.status(400).render("register", { error: "Invalid Username" });
     }
 
-    if(password !== confirm){
-      return res.status(400).render('register', {error: "Passwords do not match"})
+    if (password !== confirm) {
+      return res
+        .status(400)
+        .render("register", { error: "Passwords do not match" });
     }
 
-    try{
-    const newmail = emailAddress.toLowerCase();
-    const newuser = username.toLowerCase();
-    const getuser = await users();
-    const dupe = await getuser.findOne({emailAddress: newmail});
-    const dupeuser = await getuser.findOne({username: newuser});
+    try {
+      const newmail = emailAddress.toLowerCase();
+      const newuser = username.toLowerCase();
+      const getuser = await users();
+      const dupe = await getuser.findOne({ emailAddress: newmail });
+      const dupeuser = await getuser.findOne({ username: newuser });
 
-  if (dupe) {
-    return res.status(400).render('register', {error: "Email address already in use"})
-  }
+      if (dupe) {
+        return res
+          .status(400)
+          .render("register", { error: "Email address already in use" });
+      }
 
-  if (dupeuser) {
-    return res.status(400).render('register', {error: "Username already in use"})
-  }
-}
-catch(e){
-  return res.status(400).render('error', {
-    error: e});
-}
-try{
-
-  const user = await userData.registerUser(req.body.firstNameInput, req.body.lastNameInput, req.body.emailAddressInput, req.body.userNameInput, req.body.passwordInput, req.body.roleInput);
-        if(!user.insertedUser){
-           return res.status(400).render('register', { error: user.error})
-}
-  return res.status(200).redirect('/login')
-}
-catch(e){
-  return res.status(500).render('error', {
-    error: 'Internal server error'});
-}
+      if (dupeuser) {
+        return res
+          .status(400)
+          .render("register", { error: "Username already in use" });
+      }
+    } catch (e) {
+      return res.status(400).render("error", {
+        error: e,
+      });
+    }
+    try {
+      const user = await userData.registerUser(
+        req.body.firstNameInput,
+        req.body.lastNameInput,
+        req.body.emailAddressInput,
+        req.body.userNameInput,
+        req.body.passwordInput,
+        req.body.roleInput
+      );
+      if (!user.insertedUser) {
+        return res.status(400).render("register", { error: user.error });
+      }
+      return res.status(200).redirect("/login");
+    } catch (e) {
+      return res.status(500).render("error", {
+        error: "Internal server error",
+      });
+    }
   });
-
-
-
 
 // Login route
 router
-  .route('/login')
+  .route("/login")
   .get(async (req, res) => {
     //code here for GET
-      return res.render("login", { title: 'User Login' });
+    return res.render("login", { title: "User Login" });
   })
   .post(async (req, res) => {
     //code here for POST
     const username = req.body.userNameInput.toLowerCase().trim();
     const password = req.body.passwordInput.trim();
-    if(username === null || username === "" || password === null || password === ""){
-      return res.status(200).render('login', {error: "All fields are required"})
+    if (
+      username === null ||
+      username === "" ||
+      password === null ||
+      password === ""
+    ) {
+      return res
+        .status(200)
+        .render("login", { error: "All fields are required" });
     }
-    if(!validUser(username) || !validPass(password)){
-      return res.status(200).render('login', {error: "Invalid Username or Password"})
+    if (!validUser(username) || !validPass(password)) {
+      return res
+        .status(200)
+        .render("login", { error: "Invalid Username or Password" });
     }
 
-    try{
+    try {
       const user = await userData.loginUser(username, password);
       if (!user) {
-        return res.status(400).render('login', {error: "Invalid Username or Password"})
+        return res
+          .status(400)
+          .render("login", { error: "Invalid Username or Password" });
       }
-      req.session.user = {firstName: user.firstName, lastName: user.lastName, emailAddress: user.emailAddress, username: user.username, role: user.role, userId: user.userId}
-      if (user.role === 'admin') {
-        return res.redirect('/admin');
-    } else {
-        return res.redirect('/');
-    }
-    }
-    catch(e){
-      return res.status(400).render('error', {
-        error: e});
+      req.session.user = {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        emailAddress: user.emailAddress,
+        username: user.username,
+        role: user.role,
+        userId: user.userId,
+      };
+      if (user.role === "admin") {
+        return res.redirect("/admin");
+      } else {
+        return res.redirect("/");
+      }
+    } catch (e) {
+      return res.status(400).render("error", {
+        error: e,
+      });
     }
   });
 
 // Logout route for users to log out
-router.route('/logout').get(async (req, res) => {
+router.route("/logout").get(async (req, res) => {
   //code here for GET
-    req.session.destroy();
-    res.clearCookie('AuthState');
-    res.redirect("/");
-
+  req.session.destroy();
+  res.clearCookie("AuthState");
+  res.redirect("/");
 });
 
 export default router;

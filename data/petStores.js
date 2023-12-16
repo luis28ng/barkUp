@@ -516,6 +516,12 @@ let exportedMethods = {
     }
     return updatedInfo;
   },
+  async topRated() {
+    const storeCollection = await petStores();
+    let storeList = await storeCollection.find({}).sort({ rating: -1 }).limit(3).toArray();
+    if (!storeList) throw "Could not get stores.";
+    return storeList;
+  }
 };
 
 export default exportedMethods;

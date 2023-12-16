@@ -26,10 +26,10 @@
 <section class="top-rated-parks">
   <h2>Top Rated Parks</h2>
   <ul>
-    {{#each topRatedParks}}
+    {{#each parks}}
       <li>
-        <a href="/parks/{{this.id}}">
-          <h3>{{this.name}}</h3>
+        <a href="/parks/{{this._id}}">
+          <h3>{{this.parkName}}</h3>
           <p>Rating: {{this.rating}} Stars</p>
         </a>
       </li>
@@ -40,10 +40,10 @@
 <section class="popular-pet-stores">
   <h2>Popular Pet Stores</h2>
   <ul>
-    {{#each popularPetStores}}
+    {{#each stores}}
       <li>
-        <a href="/petstores/{{this.id}}">
-          <h3>{{this.name}}</h3>
+        <a href="/petstores/{{this._id}}">
+          <h3>{{this.storeName}}</h3>
           <p>Rating: {{this.rating}} Stars</p>
         </a>
       </li>
