@@ -120,7 +120,7 @@ return insertResult;
     
     }
     catch(e){
-      throw new Error("Login error");
+      throw new Error("Invalid Username or Password");
     }
       },
 

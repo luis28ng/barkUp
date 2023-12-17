@@ -50,11 +50,13 @@ router
   .route("/search")
   .get(async (req, res) => {
     //code here for GET
-    return res.render("search", {});
+    const tfAuth = !!req.session.user;
+    return res.render("search", {tfAuth:tfAuth});
   })
   .post(async (req, res) => {
     //code here for POST
     const searchInfo = req.body;
+    const tfAuth = !!req.session.user;
     let searchText = searchInfo.searchText;
     let searchZip = searchInfo.searchZip;
     let type = searchInfo.type;
@@ -109,6 +111,7 @@ router
       results,
       type: type,
       searchQuery: searchText,
+      tfAuth: tfAuth
     });
   });
 
@@ -128,7 +131,7 @@ router
 router
   .route("/profile")
   .get(async (req, res) => { 
-    
+    const tfAuth = !!req.session.user;
     const userId = req.session.user.userId;
 
     const userReviews = await reviewData.getAllReviewsByUser(userId);
@@ -136,7 +139,8 @@ router
     return res.render("user_profile", {
       firstName: req.session.user.firstName,
       lastName: req.session.user.lastName,
-      userReviews
+      userReviews,
+      tfAuth: tfAuth
     });
   })
   .post(async (req, res) => {
@@ -845,7 +849,8 @@ router
       } else {
         return res.redirect("/");
       }
-    } catch (e) {
+    } 
+    catch (e) {
       return res.status(400).render("login", {
         error: e,
       });

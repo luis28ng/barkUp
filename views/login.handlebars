@@ -4,7 +4,7 @@
     <div>
       <label for="userNameInput">User Name:</label>
       <input
-        type="username"
+        type = "text"
         id="userNameInput"
         name="userNameInput"
         required
@@ -27,5 +27,7 @@
     </section>
   {{/if}}
 </section> --}}
-<p>{{error}}</p>
+<div id="error" class="error">{{error}}</div>
+
 <p> Don't have an account? <a href="/register">Click here to register!</a></p>
+</section>
