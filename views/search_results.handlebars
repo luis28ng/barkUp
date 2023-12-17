@@ -12,9 +12,11 @@
           {{#if this.parkName}}
           <a href="/parks/{{this._id}}">View Details</a>
           {{else}}
-          <a href="/stores/{{this._id}}">View Details</a>
+          <a href="/petstores/{{this._id}}">View Details</a>
           {{/if}}
-          <a href="/review/addReview/{{this._id}}">Write a Review</a>
+           {{#if ../tfAuth}}
+            <a href="/review/addReview/{{this.id}}">Write a Review</a>
+          {{/if}}
         </li>
       {{/each}}
     </ul>

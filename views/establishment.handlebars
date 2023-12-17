@@ -28,10 +28,12 @@
 <p>Rating: {{petStore.rating}}</p>
 {{/if}}
 <!-- Add Review -->
+{{#if tfAuth}}
 {{#if park}}
  <a href="/review/addReview/{{park._id}}">Write a Review for {{park.parkName}}</a>
 {{else}}
 <a href="/review/addReview/{{petStore._id}}">Write a Review for {{petStore.storeName}}</a>
+{{/if}}
 {{/if}}
 <!-- Reviews Section -->
 <h3>Reviews:</h3>

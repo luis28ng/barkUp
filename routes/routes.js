@@ -694,6 +694,56 @@ router.route("/error").get(async (req, res) => {
   });
 });
 
+router
+  .route("/petstores")
+  .get(async (req, res) => {
+    //code here for GET
+    let petStores;
+    try {
+      petStores = await petStoreData.getAllPetStores();
+    } catch (e) {
+      return res.status(500).render("error", { errors: e });
+    }
+    const tfAuth = !!req.session.user
+    console.log(petStores);
+    console.log(tfAuth);
+    
+    return res.render("search_results", { results : petStores, tfAuth: tfAuth });
+  })
+  .post(async (req, res) => {
+    //code here for POST
+    console.log(req.body);
+  });
+
+  router
+  .route("/petstores/:id")
+  .get(async (req, res) => {
+    //code here for GET
+    let id = req.params.id;
+    let petstore;
+    const tfAuth = !!req.session.user
+    try {
+      if (typeof id !== "string") {
+        throw "ID must be a string.";
+      }
+      id = id.trim();
+      if (!ObjectId.isValid(id)) throw "Not a valid ID.";
+    } catch (e) {
+      return res.status(400).render("error", { error: e });
+    }
+    try {
+      petstore = await petStoreData.searchPetStoresById(id);
+    } catch (e) {
+      return res.status(400).render("error", { error: e });
+    }
+    return res.render("establishment", { petStore: petstore, tfAuth: tfAuth });
+  })
+  .post(async (req, res) => {
+    //code here for POST
+    console.log(req.body);
+  });
+
+
 // Register Route
 router
   .route("/register")
