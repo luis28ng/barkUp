@@ -362,6 +362,8 @@ let exportedMethods = {
     } else {
       newAvg =
         (currentRating * reviewArr.length + rating) / (reviewArr.length + 1);
+      newAvg = Math.round((newAvg + Number.EPSILON) * 100) / 100
+
     }
     reviewArr.push(reviewId);
     const updatedInfo = await parkCollection.findOneAndReplace(
@@ -403,6 +405,7 @@ let exportedMethods = {
     const reviewArr = currentPark.reviews;
     let newAvg = currentRating * reviewArr.length;
     newAvg = (newAvg + newRating - oldRating) / reviewArr.length;
+    newAvg = Math.round((newAvg + Number.EPSILON) * 100) / 100
     const updatedInfo = await parkCollection.findOneAndReplace(
       { _id: new ObjectId(id) },
       {
@@ -448,6 +451,7 @@ let exportedMethods = {
       newAvg = 0;
     } else {
       newAvg = (newAvg - rating) / newReviews.length;
+      newAvg = Math.round((newAvg + Number.EPSILON) * 100) / 100
     }
     const updatedInfo = await parkCollection.findOneAndReplace(
       { _id: new ObjectId(id) },

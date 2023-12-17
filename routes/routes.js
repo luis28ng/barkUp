@@ -219,10 +219,9 @@ router
   .post(async (req, res) => {
     //code here for POST
     const searchInfo = req.body;
-    let searchText = searchInfo.searchText;
-    let searchZip = searchInfo.searchZip;
+    let searchText = searchInfo.name;
+    let searchZip = searchInfo.zipCode;
     let type = searchInfo.type;
-
     try {
       if (typeof type !== "string") {
         throw "Type must be a string.";
@@ -280,6 +279,7 @@ router
   .get(async (req, res) => {
     //code here for GET
     let id = req.params.id;
+    const tfAuth = !!req.session.user;
     try {
       if (typeof id !== "string") {
         throw "ID must be a string.";
@@ -314,6 +314,7 @@ router
     return res.render("establishment", {
       park: park,
       reviews: reviews,
+      tfAuth:tfAuth,
       isAdmin: isAdmin,
     });
   })
@@ -350,7 +351,7 @@ router
     }
     // Add isAdmin flag
     const isAdmin = req.session.user && req.session.user.role === "admin";
-
+    const tfAuth = !!req.session.user;
     // Add isCurrentUser flag to each review
     reviews.forEach((review) => {
       review.isCurrentUser =
@@ -360,6 +361,7 @@ router
       petStore: petStore,
       reviews: reviews,
       isAdmin: isAdmin,
+      tfAuth:tfAuth
     });
   })
   .post(async (req, res) => {
@@ -707,7 +709,7 @@ router
     try {
       petStores = await petStoreData.getAllPetStores();
     } catch (e) {
-      return res.status(500).render("error", { errors: e });
+      return res.status(500).render("error", { error: e });
     }
     const tfAuth = !!req.session.user;
 
@@ -724,6 +726,7 @@ router
     //code here for GET
     let id = req.params.id;
     let petstore;
+    let reviews;
     const tfAuth = !!req.session.user;
     try {
       if (typeof id !== "string") {
@@ -739,7 +742,12 @@ router
     } catch (e) {
       return res.status(400).render("error", { error: e });
     }
-    return res.render("establishment", { petStore: petstore, tfAuth: tfAuth });
+    try {
+      reviews = await reviewData.getAllReviewsOfPlace(id)
+    } catch (e) {
+      return res.status(400).render("error", { error: e });
+    }
+    return res.render("establishment", { petStore: petstore, tfAuth: tfAuth, reviews:reviews });
   })
   .post(async (req, res) => {
     //code here for POST
@@ -901,9 +909,23 @@ router.route("/logout").get(async (req, res) => {
   res.redirect("/");
 });
 
-router.route("/park/:id").get(async (req, res) => {
+router.route("/parks").get(async (req, res) => {
+  let parkList;
+  try {
+    parkList = await parkData.getAllParks();
+  } catch (error) {
+    return res.status(500).render("error", { error: error });
+  }
+  const tfAuth = !!req.session.user;
+
+    return res.render("search_results", { results: parkList, tfAuth: tfAuth });
+});
+
+router.route("/parks/:id").get(async (req, res) => {
   let parkId = req.params.id;
   const tfAuth = !!req.session.user;
+  let park;
+  let reviews;
 
   try {
     if (typeof parkId !== "string") {
@@ -913,12 +935,20 @@ router.route("/park/:id").get(async (req, res) => {
     if (!ObjectId.isValid(parkId)) throw "Not a valid Park ID.";
 
     parkId = checkId(parkId, "Park ID");
-    const park = await parkData.searchParksById(parkId);
-
-    return res.render("establishment", { park: park, tfAuth: tfAuth });
   } catch (e) {
-    return res.status(404).render("error", { error: e });
+    return res.status(400).render("error", { error: e });
   }
+  try {
+    park = await parkData.searchParksById(parkId)
+  } catch (error) {
+    return res.status(400).render("error", { error: error });
+  }
+  try {
+    reviews = await reviewData.getAllReviewsOfPlace(parkId);
+  } catch (error) {
+    return res.status(400).render("error", { error: error });
+  }
+  return res.render("establishment", { park: park, tfAuth: tfAuth, reviews: reviews });
 });
 
 export default router;
