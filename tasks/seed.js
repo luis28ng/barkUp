@@ -64,7 +64,6 @@ let parkReview2 = null;
 let parkReview3 = null;
 let parkReview4 = null;
 
-
 try {
     parkReview1 = await reviews.createReview(user1.insertedId.toString(), stevensPark._id.toString(), "Lovely park", 5, "This park has so much space for my little puppy to run around and play. Would recommend this place for anyone!");
     

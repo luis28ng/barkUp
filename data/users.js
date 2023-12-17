@@ -79,7 +79,7 @@ if (!insertResult.acknowledged || !insertResult.insertedId) {
   throw new Error("Error in Register");
 }
 
-return {insertedUser: true};
+return insertResult;
 },
 
   async loginUser (username, password) {
