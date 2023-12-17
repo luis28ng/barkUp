@@ -17,12 +17,7 @@ const exportedMethods = {
     username,
     password,
     role) {
-  firstName = firstName.trim();
-  lastName = lastName.trim();
-  emailAddress = emailAddress.trim();
-  password = password.trim();
-  username = username.trim();
-  role = role.trim();
+
 
   if(!validFN(firstName)){
     throw new Error("First name must be a non empty string, not containing numbers and should be at least 2 characters long with a max of 25 characters")
@@ -45,7 +40,14 @@ const exportedMethods = {
 
   if (!validRole(role)) {
     throw new Error("Invalid role");
-  }
+    }
+
+  firstName = firstName.trim();
+  lastName = lastName.trim();
+  emailAddress = emailAddress.trim();
+  password = password.trim();
+  username = username.trim();
+  role = role.trim();
 
 const newmail = emailAddress.toLowerCase();
 const lowername = username.toLowerCase();
@@ -83,11 +85,12 @@ return insertResult;
 },
 
   async loginUser (username, password) {
-    password = password.trim();
-    username = username.trim();
+    
     if(!validPass(password) || !validUser(username)){
       throw new Error("Invalid credentials");
     };
+    password = password.trim();
+    username = username.trim();
     try{
     const newuser = username.toLowerCase();
     const getuser = await users();
@@ -128,29 +131,29 @@ return insertResult;
 
     const updates = {};
     if (firstName) {
-      firstName = firstName.trim();
       if (!validFN(firstName)) throw new Error("Invalid first name");
+      firstName = firstName.trim();
       updates.firstName = firstName;
     }
     if (lastName) {
-      lastName = lastName.trim();
       if (!validLN(lastName)) throw new Error("Invalid last name");
+      lastName = lastName.trim();
       updates.lastName = lastName;
     }
     if (emailAddress) {
-      emailAddress = emailAddress.trim().toLowerCase();
       if (!validEmail(emailAddress)) throw new Error("Invalid email address");
+      lastName = lastName.trim();
       updates.emailAddress = emailAddress;
     }
     if (password) {
-      password = password.trim();
       if (!validPass(password)) throw new Error("Invalid password");
       const saltRounds = 10;
+      password = password.trim();
       updates.password = await bcrypt.hash(password, saltRounds);
     }
     if (role) {
-      role = role.trim();
       if (!validRole(role)) throw new Error("Invalid role");
+      role = role.trim();
       updates.role = role;
     }
 
