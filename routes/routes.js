@@ -28,18 +28,22 @@ router.route("/").get(async (req, res) => {
   // Renders home page
   const tfAuth = !!req.session.user;
   let parks;
-  let stores
+  let stores;
   try {
-    parks = await parkData.topRated()
+    parks = await parkData.topRated();
   } catch (error) {
     return res.status(500).render("welcome", { error: error });
   }
   try {
-    stores = await petStoreData.topRated()
+    stores = await petStoreData.topRated();
   } catch (error) {
     return res.status(500).render("welcome", { error: error });
   }
-  return res.render("welcome", { tfAuth: tfAuth, parks:parks, stores:stores });
+  return res.render("welcome", {
+    tfAuth: tfAuth,
+    parks: parks,
+    stores: stores,
+  });
 });
 
 router
@@ -705,24 +709,24 @@ router
     } catch (e) {
       return res.status(500).render("error", { errors: e });
     }
-    const tfAuth = !!req.session.user
+    const tfAuth = !!req.session.user;
     console.log(petStores);
     console.log(tfAuth);
-    
-    return res.render("search_results", { results : petStores, tfAuth: tfAuth });
+
+    return res.render("search_results", { results: petStores, tfAuth: tfAuth });
   })
   .post(async (req, res) => {
     //code here for POST
     console.log(req.body);
   });
 
-  router
+router
   .route("/petstores/:id")
   .get(async (req, res) => {
     //code here for GET
     let id = req.params.id;
     let petstore;
-    const tfAuth = !!req.session.user
+    const tfAuth = !!req.session.user;
     try {
       if (typeof id !== "string") {
         throw "ID must be a string.";
@@ -743,7 +747,6 @@ router
     //code here for POST
     console.log(req.body);
   });
-
 
 // Register Route
 router
@@ -901,15 +904,21 @@ router.route("/logout").get(async (req, res) => {
 
 router.route("/park/:id").get(async (req, res) => {
   let parkId = req.params.id;
+  const tfAuth = !!req.session.user;
 
   try {
-  parkId = checkId(parkId, 'Park ID');
+    if (typeof parkId !== "string") {
+      throw "Park ID must be a string.";
+    }
+    parkId = parkId.trim();
+    if (!ObjectId.isValid(parkId)) throw "Not a valid Park ID.";
 
-  const park = await parkData.searchParksById(parkId);
+    parkId = checkId(parkId, "Park ID");
+    const park = await parkData.searchParksById(parkId);
 
-  return res.status(200).render('establishment', {park: park});
+    return res.render("establishment", { park: park, tfAuth: tfAuth });
   } catch (e) {
-    return res.status(404).render('error', {error: e});
+    return res.status(404).render("error", { error: e });
   }
 });
 
