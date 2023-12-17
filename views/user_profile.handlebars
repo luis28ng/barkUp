@@ -1,13 +1,37 @@
 <section>
   <h2>{{firstName}} {{lastName}}'s Profile</h2>
+  <h4>My Pets:</h4>
   <div class="pet-gallery">
     {{#each pets}}
       <div class="pet">
-        <img src="{{this.petPhoto}}" alt="{{this.name}}" />
-        <p>Meet {{this.name}}, a lovely {{this.breed}}</p>
+        <p>{{this.petName}}</p>
+        <p>Breed: {{this.petBreed}}</p>
+        <a href="/pet/{{this._id}}">Edit/Delete Pet</a>
       </div>
     {{/each}}
   </div>
+
+
+<form method="post" id="addPetForm">
+  <h3>Add a Pet</h3>
+    <div>
+    <label for="petNameInput">Pet Name:</label>
+    <input type="text" id="petNameInput" name="petNameInput" required/>
+  </div>
+  <div>
+    <label for="petGenderInput">Pet Type:</label>
+    <select id="petGenderInput" name="petGenderInput" required>
+      <option value="male">Male</option>
+      <option value="female">Female</option>
+    </select>
+  </div>
+  <div>
+    <label for="petBreedSelect">Pet Breed:</label>
+    <select id="petBreedSelect" name="petBreedSelect" required></select>
+  </div>
+  <button type="submit">Add pet</button>
+</form>
+
 
   <h3>Your Reviews</h3>
   <!-- Display user's reviews -->
@@ -22,3 +46,5 @@
   {{/each}}
 
 </section>
+
+<script src="../public/js/dogBreeds.js"></script> <!-- Link to AJAX script -->

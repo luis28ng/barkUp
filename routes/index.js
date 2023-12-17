@@ -5,7 +5,7 @@ import { static as staticDir } from "express";
 const constructorMethod = (app) => {
   app.use("/", allRoutes);
   app.use("/review", reviewRoutes);
-  app.use("/pets", petRoutes);
+  app.use("/pet", petRoutes);
   app.use("/public", staticDir("public"));
 
   app.use("*", (req, res) => {

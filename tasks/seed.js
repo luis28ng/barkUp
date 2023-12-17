@@ -3,6 +3,7 @@ import parks from "../data/parks.js";
 import petStores from "../data/petStores.js";
 import reviews from "../data/reviews.js";
 import users from "../data/users.js";
+import pets from "../data/pets.js";
 
 const db = await dbConnection();
 await db.dropDatabase();
@@ -53,6 +54,14 @@ try {
     user1 = await users.registerUser("Jameson", "Railey", "JKRailey013@gmail.com", "JKRailey013", "Password123!", "user");
     user2 = await users.registerUser("Justin", "Cross", "jcross@stevens.edu", "JCross", "JCross123!", "user");
     user3 = await users.registerUser("Head", "Founder", "admin123@admin.com", "Admin123", "Admin123!", "admin");
+} catch (e) {
+    console.log(e);
+}
+
+let pet1 = null; 
+// Adding pets
+try {
+    pet1 = await pets.createPet(user1.insertedId.toString(), "Rocky", "Male", "German Shepard");
 } catch (e) {
     console.log(e);
 }

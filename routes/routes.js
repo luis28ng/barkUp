@@ -5,6 +5,7 @@ import userData from "../data/users.js";
 import parkData from "../data/parks.js";
 import reviewData from "../data/reviews.js";
 import petStoreData from "../data/petStores.js";
+import petData from "../data/pets.js"
 import { users } from "../config/mongoCollections.js";
 
 import {
@@ -132,16 +133,35 @@ router
     const userId = req.session.user.userId;
 
     const userReviews = await reviewData.getAllReviewsByUser(userId);
+
+    const userPets = await petData.getAllPets(userId);
     
     return res.render("user_profile", {
       firstName: req.session.user.firstName,
       lastName: req.session.user.lastName,
-      userReviews
+      userReviews,
+      pets: userPets
     });
   })
   .post(async (req, res) => {
     //code here for POST
-    console.log(req.body);
+    let petInfo = req.body;
+
+    let petName = petInfo.petNameInput;
+    let petGender = petInfo.petGenderInput;
+    let petBreed = petInfo.petBreedSelect;
+
+    let userId = req.session.user.userId;
+    
+
+    let addPetInfo = null;
+
+    try {
+      addPetInfo = await petData.createPet(userId, petName, petGender, petBreed);
+      return res.status(200).redirect('/profile');
+    } catch (e) {
+      return res.status(404).render('error', {error: e});
+    }
   });
 
 // Admin Edit Park
