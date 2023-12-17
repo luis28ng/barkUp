@@ -50,9 +50,9 @@ let user2 = null;
 let user3 = null;
 
 try {
-    user1 = await users.registerUser("Jameson", "Railey", "JKRailey013@gmail.com", "Password123!", "user");
-    user2 = await users.registerUser("Justin", "Cross", "jcross@stevens.edu", "JCross123!", "user");
-    user3 = await users.registerUser("Head", "Founder", "admin123@admin.com", "Admin123!", "admin");
+    user1 = await users.registerUser("Jameson", "Railey", "JKRailey013@gmail.com", "JKRailey013", "Password123!", "user");
+    user2 = await users.registerUser("Justin", "Cross", "jcross@stevens.edu", "JCross", "JCross123!", "user");
+    user3 = await users.registerUser("Head", "Founder", "admin123@admin.com", "Admin123", "Admin123!", "admin");
 } catch (e) {
     console.log(e);
 }
