@@ -15,7 +15,7 @@
           <a href="/petstores/{{this._id}}">View Details</a>
           {{/if}}
            {{#if ../tfAuth}}
-            <a href="/review/addReview/{{this.id}}">Write a Review</a>
+            <a href="/review/addReview/{{this._id}}">Write a Review</a>
           {{/if}}
         </li>
       {{/each}}
@@ -23,5 +23,5 @@
   {{else}}
     <p>No results found for '{{searchQuery}}'. Please try again.</p>
   {{/if}}
-  <a href="/search">Search Again</a>
+  <a href="/search">Search</a>
 </section>

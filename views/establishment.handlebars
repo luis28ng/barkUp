@@ -60,7 +60,12 @@
 
 <!-- Admin Edit/Delete Links for Establishment -->
 {{#if isAdmin}}
-    <a href="/admin/edit{{#if parkName}}Park{{else}}Store{{/if}}/{{id}}">Edit Location</a>
-    <a href="/admin/delete{{#if parkName}}Park{{else}}Store{{/if}}/{{id}}">Delete Location</a>
+    {{#if park}}
+    <a href="/admin/editPark/{{park._id}}">Edit Location</a>
+    <a href="/admin/deletePark/{{park._id}}">Delete Location</a>
+    {{else}}
+    <a href="/admin/editStore/{{petStore._id}}">Edit Location</a>
+    <a href="/admin/deleteStore/{{petStore._id}}">Delete Location</a>
+    {{/if}}
 {{/if}}
 </section>

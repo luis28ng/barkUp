@@ -78,7 +78,7 @@ router
   .route('/addReview/:id')
   .get(async (req, res) => {
     const placeId = req.params.id
-
+    const tfAuth = !!req.session.user;
     let park = null;
     let store = null;
     let placeName = null
@@ -96,7 +96,7 @@ router
       placeName = store.storeName;
     };
 
-    res.render('review_form', { placeName });
+    res.render('review_form', { placeName, tfAuth: tfAuth });
   })
   .post(async (req, res) => {
 

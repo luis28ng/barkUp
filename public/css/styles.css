@@ -62,7 +62,7 @@ form {
 }
 
 input[type="text"],
-input[type="username"],
+input[id="userNameInput"],
 input[type="password"],
 input[type="email"],
 input[type="number"],
