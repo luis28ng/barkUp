@@ -7,8 +7,8 @@ export const validFN = (firstName) => {
     return false;
   }
   if (
+    typeof firstName !== "string" ||
     firstName.trim() === "" ||
-    typeof firstName.trim() !== "string" ||
     firstName.trim().length < 2 ||
     firstName.trim().length > 25 ||
     /\d/.test(firstName.trim())
@@ -23,8 +23,8 @@ export const validLN = (lastName) => {
     return false;
   }
   if (
+    typeof lastName !== "string" ||
     lastName.trim() === "" ||
-    typeof lastName.trim() !== "string" ||
     lastName.trim().length < 2 ||
     lastName.trim().length > 25 ||
     /\d/.test(lastName.trim())
@@ -40,7 +40,7 @@ export const validEmail = (emailAddress) => {
   }
 
   if (
-    typeof emailAddress.trim() !== "string" ||
+    typeof emailAddress !== "string" ||
     emailAddress.trim() === "" ||
     !/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
       emailAddress.trim()
@@ -55,7 +55,7 @@ export const validUser = (user) => {
   if (user === null) {
     return false;
   }
-  if (user.trim() === '' || typeof user !== "string" || user.trim().length > 25) {
+  if (typeof user !== "string" || user.trim() === '' || user.trim().length > 25) {
     return false;
   }
   return true;
@@ -67,8 +67,8 @@ export const validPass = (password) => {
     return false;
   }
   if (
+    typeof password !== "string" ||
     password.trim() === "" ||
-    typeof password.trim() !== "string" ||
     password.trim().length < 8
   ) {
     return false;
