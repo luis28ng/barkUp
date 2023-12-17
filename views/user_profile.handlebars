@@ -13,13 +13,12 @@
   <!-- Display user's reviews -->
   {{#each userReviews}}
     <div>
-      <h3>{{this.title}}</h3>
-      <p>{{this.description}}</p>
+      <h3>Review title: {{this.reviewTitle}}</h3>
+      <p>Review Description: {{this.reviewDescription}}</p>
       <!-- Edit/Delete button/link for each review -->
-      <a href="/reviews/edit/{{this.id}}">Edit Review</a>
-      <a href="/reviews/delete/{{this.id}}">Delete Review</a>
-
+      <a href="/review/{{this._id}}">Edit/Delete this Review</a>
     </div>
+    <br>
   {{/each}}
 
 </section>
