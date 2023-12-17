@@ -18,14 +18,14 @@
       <button type="submit">Login</button>
     </div>
   </form>
-
-  {{#if errors}}
+{{!-- This does not work properly, commenting out to look at it later --}}
+  {{!-- {{#if errors}}
     <section class="errors">
       {{#each errors}}
         <p>{{this}}</p>
       {{/each}}
     </section>
   {{/if}}
-</section>
-
+</section> --}}
+<p>{{error}}</p>
 <p> Don't have an account? <a href="/register">Click here to register!</a></p>

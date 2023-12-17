@@ -710,8 +710,6 @@ router
       return res.status(500).render("error", { errors: e });
     }
     const tfAuth = !!req.session.user;
-    console.log(petStores);
-    console.log(tfAuth);
 
     return res.render("search_results", { results: petStores, tfAuth: tfAuth });
   })
@@ -829,7 +827,7 @@ router
         req.body.passwordInput,
         req.body.roleInput
       );
-      if (!user.insertedUser) {
+      if (!user.acknowledged) {
         return res.status(400).render("register", { error: user.error });
       }
       return res.status(200).redirect("/login");
@@ -841,6 +839,7 @@ router
   });
 
 // Login route
+//There is an issue where if the credentials are valid, but there is not user in the database, it will redirect to error the if(!user) statement is not working
 router
   .route("/login")
   .get(async (req, res) => {
@@ -858,12 +857,12 @@ router
       password === ""
     ) {
       return res
-        .status(200)
+        .status(400)
         .render("login", { error: "All fields are required" });
     }
     if (!validUser(username) || !validPass(password)) {
       return res
-        .status(200)
+        .status(400)
         .render("login", { error: "Invalid Username or Password" });
     }
 
