@@ -100,7 +100,7 @@ router
       return res.status(500).render("search", { error: error });
     }
 
-    return res.render("search", {
+    return res.render("search_results", {
       results,
       type: type,
       searchQuery: searchText,

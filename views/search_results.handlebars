@@ -1,0 +1,20 @@
+<section>
+  <h2>Search Results</h2>
+  {{#if searchResults.length}}
+    <ul>
+      {{#each searchResults}}
+        <li>
+          <h3>{{this.name}}</h3>
+          <p>{{this.description}}</p>
+          <p> Rating: {{this.rating}}</p>
+
+          <!-- Conditional link based on type (park or pet store) Will probably change -->
+          <a href="/{{type}}/{{this.id}}">View Details</a>
+          <a href="/review/addReview/{{this.id}}">Write a Review</a>
+        </li>
+      {{/each}}
+    </ul>
+  {{else}}
+    <p>No results found for '{{searchQuery}}'. Please try again.</p>
+  {{/if}}
+</section>
