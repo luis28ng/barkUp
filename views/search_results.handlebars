@@ -1,20 +1,25 @@
 <section>
   <h2>Search Results</h2>
-  {{#if searchResults.length}}
+  {{#if results.length}}
     <ul>
-      {{#each searchResults}}
+      {{#each results}}
         <li>
-          <h3>{{this.name}}</h3>
+          
+          <h3>{{#if this.parkName}}{{this.parkName}}{{else}}{{this.storeName}}{{/if}}</h3>
           <p>{{this.description}}</p>
-          <p> Rating: {{this.rating}}</p>
+          <p> Rating: {{this.rating}}/5</p>
 
-          <!-- Conditional link based on type (park or pet store) Will probably change -->
-          <a href="/{{type}}/{{this.id}}">View Details</a>
-          <a href="/review/addReview/{{this.id}}">Write a Review</a>
+          {{#if this.parkName}}
+          <a href="/parks/{{this._id}}">View Details</a>
+          {{else}}
+          <a href="/stores/{{this._id}}">View Details</a>
+          {{/if}}
+          <a href="/review/addReview/{{this._id}}">Write a Review</a>
         </li>
       {{/each}}
     </ul>
   {{else}}
     <p>No results found for '{{searchQuery}}'. Please try again.</p>
   {{/if}}
+  <a href="/search">Search Again</a>
 </section>
