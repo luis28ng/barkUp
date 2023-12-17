@@ -6,23 +6,6 @@
     find them a tasty treat!"</p>
 </section>
 
-<!-- Search Functionality -->
-<form method="POST" action="/search">
-    <label for="searchText">Dog Park or Pet Store Name: </label>
-    <input type="text" id="searchText" name="searchText" placeholder="Search for dog park or pet store by name..">
-
-    <label for="searchZip">Zip Code:</label>
-    <input type="text" id="searchZip" name="searchZip" placeholder="Zip Code">
-
-    <label for="type">Type:</label>
-    <select id="type" name="type">
-        <option value="park">Park</option>
-        <option value="store">Pet Store</option>
-    </select>
-
-    <button type="submit">Search</button>
-</form>
-
 <section class="top-rated-parks">
   <h2>Top Rated Parks</h2>
   <ul>
@@ -50,6 +33,6 @@
     {{/each}}
   </ul>
    {{#if tfAuth}}
-  <a href = "/logout">logout here</a>  
+  <a href = "/logout">logout here</a>
   {{/if}}
 </section>
