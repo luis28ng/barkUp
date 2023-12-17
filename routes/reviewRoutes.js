@@ -16,6 +16,7 @@ router.route('/:id').get(async (req, res) => {
     let userId = req.session.user.userId;
     let userReviewArray = [];
     let userRole = req.session.user.role;
+    const tfAuth = !!req.session.user;
     
     if (userRole !== 'admin') {
       try {
@@ -36,7 +37,7 @@ router.route('/:id').get(async (req, res) => {
         const reviewDescription = review.reviewDescription;
         const rating = review.rating;
 
-        return res.render('review', { reviewTitle, reviewDescription, rating, reviewId })
+        return res.render('review', { reviewTitle, reviewDescription, rating, reviewId, tfAuth: tfAuth })
     } catch (e) {
         return res.redirect('/')
     };
