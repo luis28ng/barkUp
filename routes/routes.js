@@ -17,6 +17,7 @@ import {
   validPass,
   validRole,
   validUser,
+  checkId,
 } from "../helpers.js";
 
 // Probably will need some sort of helpers.js for error checking in routes
@@ -846,6 +847,20 @@ router.route("/logout").get(async (req, res) => {
   req.session.destroy();
   res.clearCookie("AuthState");
   res.redirect("/");
+});
+
+router.route("/park/:id").get(async (req, res) => {
+  let parkId = req.params.id;
+
+  try {
+  parkId = checkId(parkId, 'Park ID');
+
+  const park = await parkData.searchParksById(parkId);
+
+  return res.status(200).render('establishment', {park: park});
+  } catch (e) {
+    return res.status(404).render('error', {error: e});
+  }
 });
 
 export default router;
