@@ -47,10 +47,12 @@ router
   .get(async (req, res) => {
     //code here for GET
     let petId = req.params.id;
+    const tfAuth = !!req.session.user;
+    const isAdmin = req.session.user && req.session.user.role === "admin";
     try {
         petId = checkId(petId, 'Pet ID');
     } catch (e) {
-        return res.status(404).render('user_pet');
+      return res.status(404).render('user_pet', { tfAuth: tfAuth, isAdmin: isAdmin });
     }
 
     try {
@@ -58,20 +60,22 @@ router
       const petName = petInfo.petName;
       const petGender = petInfo.petGender;
       const petBreed = petInfo.petBreed;
-      return res.status(200).render('user_pet', {petName, petGender, petBreed, petId});
+      return res.status(200).render('user_pet', {petName, petGender, petBreed, petId, tfAuth:tfAuth,isAdmin:isAdmin});
     } catch (e) {
-      return res.status(404).render('user_pet', {error: e})
+      return res.status(404).render('user_pet', { error: e, tfAuth: tfAuth, isAdmin: isAdmin });
     }
   })
   .delete(async (req, res) => {
     //code here for DELETE
     let petId = req.params.id;
+    const tfAuth = !!req.session.user;
+    const isAdmin = req.session.user && req.session.user.role === "admin";
     petId = checkId(petId, 'Pet ID');
     try {
       const deletePet = await petData.removePet(petId);
-      return res.render('user_pet', {deletionSuccess: true});
+      return res.render('user_pet', { deletionSuccess: true, tfAuth: tfAuth, isAdmin: isAdmin });
     } catch (e) {
-      return res.status(404).render('user_pet', {deletionSuccess: false});
+      return res.status(404).render('user_pet', {deletionSuccess: false, isAdmin:isAdmin, tfAuth:tfAuth});
     }
   })
   .put(async (req, res) => {
@@ -79,15 +83,15 @@ router
     let petName = req.body.petNameInput;
     let petGender = req.body.petGenderInput;
     let petBreed = req.body.petBreedSelect;
-
-    console.log(req.body)
+    const tfAuth = !!req.session.user;
+    const isAdmin = req.session.user && req.session.user.role === "admin";
 
     let updatedPet = null;
     try {
       updatedPet = await petData.updatePet(petId,petName,petGender,petBreed);
-      res.status(200).render('user_pet', { updateSuccess: true });
+      res.status(200).render('user_pet', { updateSuccess: true, tfAuth:tfAuth, isAdmin:isAdmin });
     } catch (e) {
-      return res.status(404).render('user_pet', { updateSuccess: false });
+      return res.status(404).render('user_pet', { updateSuccess: false, tfAuth:tfAuth, isAdmin:isAdmin });
     }
   });
 

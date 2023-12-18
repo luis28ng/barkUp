@@ -19,6 +19,7 @@ import {
   validRole,
   validUser,
   checkId,
+  isAdmin,
 } from "../helpers.js";
 
 // Probably will need some sort of helpers.js for error checking in routes
@@ -28,22 +29,24 @@ import {
 router.route("/").get(async (req, res) => {
   // Renders home page
   const tfAuth = !!req.session.user;
+  const isAdmin = req.session.user && req.session.user.role === "admin";
   let parks;
   let stores;
   try {
     parks = await parkData.topRated();
   } catch (error) {
-    return res.status(500).render("welcome", { error: error });
+    return res.status(500).render("welcome", { tfAuth:tfAuth, isAdmin:isAdmin, error: error });
   }
   try {
     stores = await petStoreData.topRated();
   } catch (error) {
-    return res.status(500).render("welcome", { error: error });
+    return res.status(500).render("welcome", { tfAuth:tfAuth, isAdmin:isAdmin, error: error });
   }
   return res.render("welcome", {
     tfAuth: tfAuth,
     parks: parks,
     stores: stores,
+    isAdmin:isAdmin
   });
 });
 
@@ -52,10 +55,12 @@ router
   .get(async (req, res) => {
     //code here for GET
     const tfAuth = !!req.session.user;
-    return res.render("search", {tfAuth:tfAuth});
+    const isAdmin = req.session.user && req.session.user.role === "admin";
+    return res.render("search", {tfAuth:tfAuth,isAdmin:isAdmin});
   })
   .post(async (req, res) => {
     //code here for POST
+    const isAdmin = req.session.user && req.session.user.role === "admin";
     const searchInfo = req.body;
     const tfAuth = !!req.session.user;
     let searchText = searchInfo.searchText;
@@ -86,7 +91,7 @@ router
         if (!zipReg.test(searchZip)) throw "Invalid zip code";
       }
     } catch (error) {
-      return res.status(400).render("search", { error: error });
+      return res.status(400).render("search", { tfAuth:tfAuth,isAdmin:isAdmin,error: error });
     }
 
     let results = null;
@@ -105,14 +110,15 @@ router
         }
       }
     } catch (error) {
-      return res.status(500).render("search", { error: error });
+      return res.status(500).render("search", { tfAuth:tfAuth, isAdmin:isAdmin, error: error });
     }
 
     return res.render("search_results", {
       results,
       type: type,
       searchQuery: searchText,
-      tfAuth: tfAuth
+      tfAuth: tfAuth,
+      isAdmin:isAdmin
     });
   });
 
@@ -134,7 +140,7 @@ router
   .get(async (req, res) => { 
     const tfAuth = !!req.session.user;
     const userId = req.session.user.userId;
-
+    const isAdmin = req.session.user && req.session.user.role === "admin";
     const userReviews = await reviewData.getAllReviewsByUser(userId);
 
     const userPets = await petData.getAllPets(userId);
@@ -144,7 +150,8 @@ router
       lastName: req.session.user.lastName,
       userReviews,
       pets: userPets,
-      tfAuth: tfAuth
+      tfAuth: tfAuth,
+      isAdmin:isAdmin
     });
   })
   .post(async (req, res) => {
@@ -156,7 +163,8 @@ router
     let petBreed = petInfo.petBreedSelect;
 
     let userId = req.session.user.userId;
-    
+    const tfAuth = !!req.session.user;
+    const isAdmin = req.session.user && req.session.user.role === "admin";
 
     let addPetInfo = null;
 
@@ -164,7 +172,7 @@ router
       addPetInfo = await petData.createPet(userId, petName, petGender, petBreed);
       return res.status(200).redirect('/profile');
     } catch (e) {
-      return res.status(404).render('error', {error: e});
+      return res.status(404).render('error', {tfAuth:tfAuth, isAdmin:isAdmin,error: e});
     }
   });
 
@@ -174,11 +182,12 @@ router
   .get(async (req, res) => {
     //code here for GET
     const tfAuth = !!req.session.user;
-    return res.render("admin_panel", {tfAuth:tfAuth});
+    return res.render("admin_panel", {tfAuth:tfAuth, isAdmin:isAdmin});
   })
   .post(async (req, res) => {
     //code here for POST
     const tfAuth = !!req.session.user;
+    const isAdmin = req.session.user && req.session.user.role === "admin";
     const searchInfo = req.body;
     let searchText = searchInfo.name;
     let searchZip = searchInfo.zipCode;
@@ -207,7 +216,7 @@ router
         if (!zipReg.test(searchZip)) throw "Invalid zip code";
       }
     } catch (error) {
-      return res.status(400).render("admin_panel", { tfAuth: tfAuth, error: error });
+      return res.status(400).render("admin_panel", { tfAuth: tfAuth, isAdmin:isAdmin, error: error });
     }
 
     let searchResults = null;
@@ -229,10 +238,10 @@ router
         }
       }
     } catch (error) {
-      return res.status(500).render("admin_panel", { tfAuth: tfAuth, error: error });
+      return res.status(500).render("admin_panel", { tfAuth: tfAuth, isAdmin:isAdmin, error: error });
     }
 
-    return res.render("admin_panel", { tfAuth:tfAuth, searchResults });
+    return res.render("admin_panel", { tfAuth:tfAuth, isAdmin:isAdmin, searchResults });
   });
 
 router
@@ -241,6 +250,7 @@ router
     //code here for GET
     let id = req.params.id;
     const tfAuth = !!req.session.user;
+     const isAdmin = req.session.user && req.session.user.role === "admin";
     try {
       if (typeof id !== "string") {
         throw "ID must be a string.";
@@ -249,22 +259,21 @@ router
       if (!ObjectId.isValid(id)) throw "Not a valid ID.";
     } catch (error) {
       // Have to render error if id is not valid cannot get information
-      return res.status(400).render("error", { tfAuth:tfAuth, error: error });
+      return res.status(400).render("error", { tfAuth:tfAuth, isAdmin:isAdmin, error: error });
     }
     let park;
     try {
       park = await parkData.searchParksById(id);
     } catch (error) {
-      return res.status(400).render("error", { tfAuth:tfAuth, error: error });
+      return res.status(400).render("error", { tfAuth:tfAuth, isAdmin:isAdmin, error: error });
     }
     let reviews;
     try {
       reviews = await reviewData.getAllReviewsOfPlace(id);
     } catch (error) {
-      return res.status(400).render("error", { tfAuth:tfAuth, error: error });
+      return res.status(400).render("error", { tfAuth:tfAuth, isAdmin:isAdmin, error: error });
     }
-    // Add isAdmin flag
-    const isAdmin = req.session.user && req.session.user.role === "admin";
+    
 
     // Add isCurrentUser flag to each review
     reviews.forEach((review) => {
@@ -297,19 +306,19 @@ router
       id = id.trim();
       if (!ObjectId.isValid(id)) throw "Not a valid ID.";
     } catch (error) {
-      return res.status(400).render("error", { tfAuth:tfAuth, error: error });
+      return res.status(400).render("error", { tfAuth:tfAuth, isAdmin:isAdmin, error: error });
     }
     let petStore;
     try {
       petStore = await petStoreData.searchPetStoresById(id);
     } catch (error) {
-      return res.status(400).render("error", { tfAuth:tfAuth, error: error });
+      return res.status(400).render("error", { tfAuth:tfAuth, isAdmin:isAdmin, error: error });
     }
     let reviews;
     try {
       reviews = await reviewData.getAllReviewsOfPlace(id);
     } catch (error) {
-      return res.status(400).render("error", { tfAuth:tfAuth, error: error });
+      return res.status(400).render("error", { tfAuth:tfAuth, isAdmin:isAdmin, error: error });
     }
     // Add isAdmin flag
     const isAdmin = req.session.user && req.session.user.role === "admin";
@@ -334,19 +343,21 @@ router
   .route("/admin/addPark")
   .get(async (req, res) => {
     const tfAuth = !!req.session.user;
-    return res.render("admin_add_establishment", { tfAuth:tfAuth, addingPark: true });
+     const isAdmin = req.session.user && req.session.user.role === "admin";
+    return res.render("admin_add_establishment", { tfAuth:tfAuth, isAdmin:isAdmin, addingPark: true });
   })
   .post(async (req, res) => {
     let parkInfo = req.body;
     let parkName = parkInfo.parkName;
     let location = parkInfo.location;
     const tfAuth = !!req.session.user;
+    const isAdmin = req.session.user && req.session.user.role === "admin";
     try {
       validPark(parkName, location);
     } catch (error) {
       return res
         .status(400)
-        .render("admin_add_establishment", { tfAuth:tfAuth, error: error });
+        .render("admin_add_establishment", { tfAuth:tfAuth, isAdmin:isAdmin, error: error });
     }
     let park;
     try {
@@ -354,7 +365,7 @@ router
     } catch (error) {
       return res
         .status(400)
-        .render("admin_add_establishment", { tfAuth:tfAuth, error: error });
+        .render("admin_add_establishment", { tfAuth:tfAuth, isAdmin:isAdmin, error: error });
     }
     return res.redirect(`/admin/park/${park._id}`);
   });
@@ -363,7 +374,8 @@ router
   .route("/admin/addStore")
   .get(async (req, res) => {
     const tfAuth = !!req.session.user;
-    return res.render("admin_add_establishment", { tfAuth:tfAuth, addingPark: false });
+     const isAdmin = req.session.user && req.session.user.role === "admin";
+    return res.render("admin_add_establishment", { tfAuth:tfAuth, isAdmin:isAdmin, addingPark: false });
   })
   .post(async (req, res) => {
     let petStoreInfo = req.body;
@@ -371,12 +383,13 @@ router
     let operationHours = petStoreInfo.operationHours;
     let location = petStoreInfo.location;
     const tfAuth = !!req.session.user;
+    const isAdmin = req.session.user && req.session.user.role === "admin";
     try {
       validPetStore(storeName, operationHours, location);
     } catch (error) {
       return res
         .status(400)
-        .render("admin_add_establishment", { tfAuth:tfAuth, error: error });
+        .render("admin_add_establishment", { tfAuth:tfAuth, isAdmin:isAdmin,error: error });
     }
     let petStore;
     try {
@@ -388,7 +401,7 @@ router
     } catch (error) {
       return res
         .status(400)
-        .render("admin_add_establishment", { tfAuth:tfAuth, error: error });
+        .render("admin_add_establishment", { tfAuth:tfAuth, isAdmin:isAdmin,error: error });
     }
     return res.redirect(`/admin/store/${petStore._id}`);
   });
@@ -399,6 +412,7 @@ router
     //code here for GET
     let id = req.params.id;
     const tfAuth = !!req.session.user;
+     const isAdmin = req.session.user && req.session.user.role === "admin";
     try {
       if (typeof id !== "string") {
         throw "ID must be a string.";
@@ -406,19 +420,19 @@ router
       id = id.trim();
       if (!ObjectId.isValid(id)) throw "Not a valid ID.";
     } catch (error) {
-      return res.status(400).render("error", { tfAuth:tfAuth, error: error });
+      return res.status(400).render("error", { tfAuth:tfAuth,isAdmin:isAdmin, error: error });
     }
     let park;
     try {
       park = await parkData.searchParksById(id);
     } catch (error) {
-      return res.status(400).render("error", { tfAuth:tfAuth, error: error });
+      return res.status(400).render("error", { tfAuth:tfAuth,isAdmin:isAdmin, error: error });
     }
     let reviews;
     try {
       reviews = await reviewData.getAllReviewsOfPlace(id);
     } catch (error) {
-      return res.status(400).render("error", { tfAuth:tfAuth, error: error });
+      return res.status(400).render("error", { tfAuth:tfAuth,isAdmin:isAdmin, error: error });
     }
     for (let i = 0; i < reviews.length; i++) {
       reviews[i]._id = reviews[i]._id.toString();
@@ -427,7 +441,8 @@ router
     return res.render("admin_edit_establishment", {
       park: park,
       reviews: reviews,
-      tfAuth:tfAuth, 
+      tfAuth: tfAuth, 
+      isAdmin:isAdmin,
     });
   })
   .post(async (req, res) => {
@@ -437,6 +452,7 @@ router
     let parkName = parkInfo.parkName;
     let location = parkInfo.location;
     const tfAuth = !!req.session.user;
+     const isAdmin = req.session.user && req.session.user.role === "admin";
     try {
       if (typeof id !== "string") {
         throw "ID must be a string.";
@@ -444,14 +460,14 @@ router
       id = id.trim();
       if (!ObjectId.isValid(id)) throw "Not a valid ID.";
     } catch (error) {
-      return res.status(400).render("error", { tfAuth:tfAuth, error: error });
+      return res.status(400).render("error", { tfAuth:tfAuth,isAdmin:isAdmin, error: error });
     }
     try {
       validPark(parkName, location);
     } catch (error) {
       return res
         .status(400)
-        .render("admin_edit_establishment", { tfAuth:tfAuth, error: error });
+        .render("admin_edit_establishment", { tfAuth:tfAuth,isAdmin:isAdmin, error: error });
     }
     let park;
     try {
@@ -459,7 +475,7 @@ router
     } catch (error) {
       return res
         .status(400)
-        .render("admin_edit_establishment", { tfAuth:tfAuth, error: error });
+        .render("admin_edit_establishment", { tfAuth:tfAuth,isAdmin:isAdmin, error: error });
     }
     return res.redirect(`/admin/park/${park._id}`);
   });
@@ -471,6 +487,7 @@ router
     //code here for GET
     let id = req.params.id;
     const tfAuth = !!req.session.user;
+     const isAdmin = req.session.user && req.session.user.role === "admin";
     try {
       if (typeof id !== "string") {
         throw "ID must be a string.";
@@ -484,13 +501,13 @@ router
     try {
       petStore = await petStoreData.searchPetStoresById(id);
     } catch (error) {
-      return res.status(400).render("error", { tfAuth:tfAuth, error: error });
+      return res.status(400).render("error", { tfAuth:tfAuth,isAdmin:isAdmin, error: error });
     }
     let reviews;
     try {
       reviews = await reviewData.getAllReviewsOfPlace(id);
     } catch (error) {
-      return res.status(400).render("error", { tfAuth:tfAuth, error: error });
+      return res.status(400).render("error", { tfAuth:tfAuth,isAdmin:isAdmin, error: error });
     }
     for (let i = 0; i < reviews.length; i++) {
       reviews[i]._id = reviews[i]._id.toString();
@@ -498,7 +515,8 @@ router
     return res.render("admin_edit_establishment", {
       petStore: petStore,
       reviews: reviews,
-      tfAuth:tfAuth, 
+      tfAuth: tfAuth, 
+      isAdmin:isAdmin,
     });
   })
   .post(async (req, res) => {
@@ -509,6 +527,7 @@ router
     let operationHours = petStoreInfo.operationHours;
     let location = petStoreInfo.location;
     const tfAuth = !!req.session.user;
+    const isAdmin = req.session.user && req.session.user.role === "admin";
     try {
       if (typeof id !== "string") {
         throw "ID must be a string.";
@@ -516,12 +535,12 @@ router
       id = id.trim();
       if (!ObjectId.isValid(id)) throw "Not a valid ID.";
     } catch (error) {
-      return res.status(400).render("error", { tfAuth:tfAuth, error: error });
+      return res.status(400).render("error", { tfAuth:tfAuth,isAdmin:isAdmin, error: error });
     }
     try {
       validPetStore(storeName, operationHours, location);
     } catch (error) {
-      return res.status(400).render("admin_edit_establishment", { tfAuth: tfAuth, });
+      return res.status(400).render("admin_edit_establishment", { tfAuth: tfAuth, isAdmin:isAdmin});
     }
     let petStore;
     try {
@@ -534,7 +553,7 @@ router
     } catch (error) {
       return res
         .status(500)
-        .render("admin_edit_establishment", { tfAuth:tfAuth, error: error });
+        .render("admin_edit_establishment", { tfAuth:tfAuth, error: error,isAdmin:isAdmin });
     }
     return res.redirect(`/admin/store/${petStore._id}`);
   });
@@ -544,6 +563,7 @@ router
   .get(async (req, res) => {
     const tfAuth = !!req.session.user;
     let id = req.params.id;
+     const isAdmin = req.session.user && req.session.user.role === "admin";
     try {
       if (typeof id !== "string") {
         throw "ID must be a string.";
@@ -551,19 +571,20 @@ router
       id = id.trim();
       if (!ObjectId.isValid(id)) throw "Not a valid ID.";
     } catch (error) {
-      return res.status(400).render("error", { tfAuth:tfAuth, error: error });
+      return res.status(400).render("error", { tfAuth:tfAuth,isAdmin:isAdmin, error: error });
     }
     let review;
     try {
       review = await reviewData.getReviewById(id);
     } catch (error) {
-      return res.status(400).render("error", { tfAuth:tfAuth, error: error });
+      return res.status(400).render("error", { tfAuth:tfAuth,isAdmin:isAdmin, error: error });
     }
-    return res.render("admin_delete_review", { tfAuth:tfAuth, review: review });
+    return res.render("admin_delete_review", { tfAuth:tfAuth,isAdmin:isAdmin, review: review });
   })
   .post(async (req, res) => {
     let id = req.params.id;
     const tfAuth = !!req.session.user;
+    const isAdmin = req.session.user && req.session.user.role === "admin";
     try {
       if (typeof id !== "string") {
         throw "ID must be a string.";
@@ -571,12 +592,12 @@ router
       id = id.trim();
       if (!ObjectId.isValid(id)) throw "Not a valid ID.";
     } catch (error) {
-      return res.status(400).render("error", { tfAuth:tfAuth, error: error });
+      return res.status(400).render("error", { tfAuth:tfAuth,isAdmin:isAdmin, error: error });
     }
     try {
       let review = await reviewData.deleteReview(id);
     } catch (error) {
-      return res.status(500).render("error", { tfAuth:tfAuth, error: error });
+      return res.status(500).render("error", { tfAuth:tfAuth,isAdmin:isAdmin, error: error });
     }
     return res.redirect("/admin");
   });
@@ -585,6 +606,7 @@ router
   .route("/admin/deleteStore/:id")
   .get(async (req, res) => {
     const tfAuth = !!req.session.user;
+     const isAdmin = req.session.user && req.session.user.role === "admin";
     let id = req.params.id;
     try {
       if (typeof id !== "string") {
@@ -593,7 +615,7 @@ router
       id = id.trim();
       if (!ObjectId.isValid(id)) throw "Not a valid ID.";
     } catch (error) {
-      return res.status(400).render("error", { tfAuth:tfAuth, error: error });
+      return res.status(400).render("error", { tfAuth:tfAuth,isAdmin:isAdmin, error: error });
     }
     let petStore;
     try {
@@ -601,10 +623,11 @@ router
     } catch (error) {
       return res.status(400).render("error", { tfAuth:tfAuth, error: error });
     }
-    return res.render("admin_delete_establishment", { tfAuth:tfAuth, petStore: petStore });
+    return res.render("admin_delete_establishment", { tfAuth:tfAuth,isAdmin:isAdmin, petStore: petStore });
   })
   .post(async (req, res) => {
     const tfAuth = !!req.session.user;
+     const isAdmin = req.session.user && req.session.user.role === "admin";
     let id = req.params.id;
     try {
       if (typeof id !== "string") {
@@ -613,12 +636,12 @@ router
       id = id.trim();
       if (!ObjectId.isValid(id)) throw "Not a valid ID.";
     } catch (error) {
-      return res.status(400).render("error", { tfAuth:tfAuth, error: error });
+      return res.status(400).render("error", { tfAuth:tfAuth,isAdmin:isAdmin, error: error });
     }
     try {
       await petStoreData.deletePetStore(id);
     } catch (error) {
-      return res.status(500).render("error", { tfAuth:tfAuth, error: error });
+      return res.status(500).render("error", { tfAuth:tfAuth,isAdmin:isAdmin, error: error });
     }
     return res.redirect("/admin");
   });
@@ -627,6 +650,7 @@ router
   .route("/admin/deletePark/:id")
   .get(async (req, res) => {
     const tfAuth = !!req.session.user;
+     const isAdmin = req.session.user && req.session.user.role === "admin";
     let id = req.params.id;
     try {
       if (typeof id !== "string") {
@@ -635,18 +659,19 @@ router
       id = id.trim();
       if (!ObjectId.isValid(id)) throw "Not a valid ID.";
     } catch (error) {
-      return res.status(400).render("error", { tfAuth:tfAuth, error: error });
+      return res.status(400).render("error", { tfAuth:tfAuth,isAdmin:isAdmin, error: error });
     }
     let park;
     try {
       park = await parkData.searchParksById(id);
     } catch (error) {
-      return res.status(400).render("error", { tfAuth:tfAuth, error: error });
+      return res.status(400).render("error", { tfAuth:tfAuth,isAdmin:isAdmin, error: error });
     }
-    return res.render("admin_delete_establishment", { tfAuth:tfAuth, park: park });
+    return res.render("admin_delete_establishment", { tfAuth:tfAuth,isAdmin:isAdmin, park: park });
   })
   .post(async (req, res) => {
     const tfAuth = !!req.session.user;
+     const isAdmin = req.session.user && req.session.user.role === "admin";
     let id = req.params.id;
     try {
       if (typeof id !== "string") {
@@ -655,12 +680,12 @@ router
       id = id.trim();
       if (!ObjectId.isValid(id)) throw "Not a valid ID.";
     } catch (error) {
-      return res.status(400).render("error", { tfAuth:tfAuth, error: error });
+      return res.status(400).render("error", { tfAuth:tfAuth,isAdmin:isAdmin, error: error });
     }
     try {
       await parkData.deletePark(id);
     } catch (error) {
-      return res.status(500).render("error", { tfAuth:tfAuth, error: error });
+      return res.status(500).render("error", { tfAuth:tfAuth,isAdmin:isAdmin, error: error });
     }
     return res.redirect("/admin");
   });
@@ -668,11 +693,14 @@ router
 // Error route; not sure if we will need it
 router.route("/error").get(async (req, res) => {
   //code here for GET
+  const tfAuth = !!req.session.user;
+  const isAdmin = req.session.user && req.session.user.role === "admin";
   return res.render("error", {
     title: "Error",
     statusCode: req.query.statusCode,
     error: req.query.error,
-    tfAuth:tfAuth, 
+    tfAuth: tfAuth, 
+    isAdmin:isAdmin
   });
 });
 
@@ -680,15 +708,17 @@ router
   .route("/petstores")
   .get(async (req, res) => {
     //code here for GET
+  const tfAuth = !!req.session.user;
+  const isAdmin = req.session.user && req.session.user.role === "admin";
     let petStores;
     try {
       petStores = await petStoreData.getAllPetStores();
     } catch (e) {
-      return res.status(500).render("error", { tfAuth:tfAuth, error: e });
+      return res.status(500).render("error", { tfAuth:tfAuth,isAdmin:isAdmin, error: e });
     }
-    const tfAuth = !!req.session.user;
+    
 
-    return res.render("search_results", { results: petStores, tfAuth: tfAuth });
+    return res.render("search_results", { results: petStores, tfAuth: tfAuth,isAdmin:isAdmin });
   })
   .post(async (req, res) => {
     //code here for POST
@@ -703,6 +733,7 @@ router
     let petstore;
     let reviews;
     const tfAuth = !!req.session.user;
+    const isAdmin = req.session.user && req.session.user.role === "admin";
     try {
       if (typeof id !== "string") {
         throw "ID must be a string.";
@@ -710,19 +741,19 @@ router
       id = id.trim();
       if (!ObjectId.isValid(id)) throw "Not a valid ID.";
     } catch (e) {
-      return res.status(400).render("error", { tfAuth:tfAuth, error: e });
+      return res.status(400).render("error", { tfAuth:tfAuth,isAdmin:isAdmin, error: e });
     }
     try {
       petstore = await petStoreData.searchPetStoresById(id);
     } catch (e) {
-      return res.status(400).render("error", { tfAuth:tfAuth, error: e });
+      return res.status(400).render("error", { tfAuth:tfAuth,isAdmin:isAdmin, error: e });
     }
     try {
       reviews = await reviewData.getAllReviewsOfPlace(id)
     } catch (e) {
-      return res.status(400).render("error", { tfAuth:tfAuth, error: e });
+      return res.status(400).render("error", { tfAuth:tfAuth,isAdmin:isAdmin, error: e });
     }
-    return res.render("establishment", { petStore: petstore, tfAuth: tfAuth, reviews:reviews });
+    return res.render("establishment", { petStore: petstore, tfAuth: tfAuth,isAdmin:isAdmin, reviews:reviews });
   })
   .post(async (req, res) => {
     //code here for POST
@@ -734,11 +765,15 @@ router
   .route("/register")
   .get(async (req, res) => {
     //code here for GET
+    const tfAuth = !!req.session.user;
+    const isAdmin = req.session.user && req.session.user.role === "admin";
     try {
       return res.status(200).render("register");
     } catch (e) {
       return res.status(400).render("error", {
         error: e,
+        tfAuth: tfAuth,
+        isAdmin:isAdmin,
       });
     }
   })
@@ -750,7 +785,8 @@ router
     const username = req.body.userNameInput.trim();
     const password = req.body.passwordInput.trim();
     const confirm = req.body.confirmPasswordInput.trim();
-
+    const tfAuth = !!req.session.user;
+    const isAdmin = req.session.user && req.session.user.role === "admin";
     if (!validFN(firstName)) {
       return res
         .status(400)
@@ -799,6 +835,8 @@ router
     } catch (e) {
       return res.status(400).render("error", {
         error: e,
+        tfAuth: tfAuth,
+        isAdmin:isAdmin,
       });
     }
     try {
@@ -817,6 +855,8 @@ router
     } catch (e) {
       return res.status(500).render("error", {
         error: "Internal server error",
+        tfAuth: tfAuth,
+        isAdmin:isAdmin
       });
     }
   });
@@ -887,19 +927,21 @@ router.route("/logout").get(async (req, res) => {
 
 router.route("/parks").get(async (req, res) => {
   let parkList;
+  const tfAuth = !!req.session.user;
+  const isAdmin = req.session.user && req.session.user.role === "admin";
   try {
     parkList = await parkData.getAllParks();
   } catch (error) {
     return res.status(500).render("error", { error: error });
   }
-  const tfAuth = !!req.session.user;
 
-    return res.render("search_results", { results: parkList, tfAuth: tfAuth });
+    return res.render("search_results", { results: parkList, tfAuth: tfAuth, isAdmin:isAdmin });
 });
 
 router.route("/parks/:id").get(async (req, res) => {
   let parkId = req.params.id;
   const tfAuth = !!req.session.user;
+  const isAdmin = req.session.user && req.session.user.role === "admin";
   let park;
   let reviews;
 
@@ -912,19 +954,19 @@ router.route("/parks/:id").get(async (req, res) => {
 
     parkId = checkId(parkId, "Park ID");
   } catch (e) {
-    return res.status(400).render("error", { error: e });
+    return res.status(400).render("error", { error: e,tfAuth:tfAuth,isAdmin:isAdmin });
   }
   try {
     park = await parkData.searchParksById(parkId)
   } catch (error) {
-    return res.status(400).render("error", { error: error });
+    return res.status(400).render("error", { error: error,isAdmin:isAdmin, tfAuth:tfAuth });
   }
   try {
     reviews = await reviewData.getAllReviewsOfPlace(parkId);
   } catch (error) {
-    return res.status(400).render("error", { error: error });
+    return res.status(400).render("error", { error: error, isAdmin:isAdmin, tfAuth:tfAuth });
   }
-  return res.render("establishment", { park: park, tfAuth: tfAuth, reviews: reviews });
+  return res.render("establishment", { park: park, tfAuth: tfAuth,isAdmin:isAdmin, reviews: reviews });
 });
 
 export default router;

@@ -7,7 +7,7 @@ import parks from "../data/parks.js";
 import stores from "../data/petStores.js";
 
 router.route('/').get(async (req, res) => {
-    //code here for GET
+  //code here for GET
     res.redirect('/')
   });
 
@@ -17,6 +17,7 @@ router.route('/:id').get(async (req, res) => {
     let userReviewArray = [];
     let userRole = req.session.user.role;
     const tfAuth = !!req.session.user;
+    const isAdmin = req.session.user && req.session.user.role === "admin";
     
     if (userRole !== 'admin') {
       try {
@@ -37,7 +38,7 @@ router.route('/:id').get(async (req, res) => {
         const reviewDescription = review.reviewDescription;
         const rating = review.rating;
 
-        return res.render('review', { reviewTitle, reviewDescription, rating, reviewId, tfAuth: tfAuth })
+        return res.render('review', { reviewTitle, reviewDescription, rating, reviewId, tfAuth: tfAuth,isAdmin:isAdmin })
     } catch (e) {
         return res.redirect('/')
     };
@@ -45,17 +46,19 @@ router.route('/:id').get(async (req, res) => {
   })
   .delete(async (req,res) => {
     let reviewId = req.params.id
+    const tfAuth = !!req.session.user;
+    const isAdmin = req.session.user && req.session.user.role === "admin";
     try {
       reviewId = checkId(reviewId, 'Review Id')
     } catch (e) {
-      return res.status(404).render('review', { deletionSuccess: false });
+      return res.status(404).render('review', { deletionSuccess: false,tfAuth:tfAuth,isAdmin:isAdmin });
     };
 
     try {
       const deleteReview = await reviews.deleteReview(reviewId);
-      return res.status(200).render('review', { deletionSuccess: true });
+      return res.status(200).render('review', { deletionSuccess: true,tfAuth:tfAuth,isAdmin:isAdmin });
     } catch (e) {
-      return res.status(404).render('review', { deletionSuccess: false });
+      return res.status(404).render('review', { deletionSuccess: false,tfAuth:tfAuth,isAdmin:isAdmin });
     }
   })
   .put(async (req,res) => {
@@ -63,14 +66,15 @@ router.route('/:id').get(async (req, res) => {
     let reviewTitle = req.body.updatedTitle;
     let reviewDescription = req.body.updatedDescription;
     let rating = parseInt(req.body.updatedRating);
-    console.log(req.body)
+    const tfAuth = !!req.session.user;
+    const isAdmin = req.session.user && req.session.user.role === "admin";
 
     try {
       const updatedReview = await reviews.updateReview(reviewId,reviewTitle,rating,reviewDescription);
       console.log(updatedReview)
-      res.status(200).render('review', { updateSuccess: true });
+      res.status(200).render('review', { updateSuccess: true, tfAuth: tfAuth, isAdmin: isAdmin });
     } catch (e) {
-      return res.status(404).render('review', { updateSuccess: false });
+      return res.status(404).render('review', { updateSuccess: false, tfAuth: tfAuth, isAdmin: isAdmin });
     }
   })
 
@@ -80,6 +84,7 @@ router
   .get(async (req, res) => {
     const placeId = req.params.id
     const tfAuth = !!req.session.user;
+    const isAdmin = req.session.user && req.session.user.role === "admin";
     let park = null;
     let store = null;
     let placeName = null
@@ -97,7 +102,7 @@ router
       placeName = store.storeName;
     };
 
-    res.render('review_form', { placeName, tfAuth: tfAuth });
+    res.render('review_form', { placeName, tfAuth: tfAuth, isAdmin:isAdmin });
   })
   .post(async (req, res) => {
 
@@ -106,13 +111,14 @@ router
     const reviewTitle = req.body.reviewTitle;
     const rating = parseInt(req.body.rating);
     const reviewDescription = req.body.reviewDescription;
-
+    const tfAuth = !!req.session.user;
+    const isAdmin = req.session.user && req.session.user.role === "admin";
 
     try {
         const newReview = await reviews.createReview(userId,placeId,reviewTitle,rating,reviewDescription)
         res.redirect(`/review/${newReview._id}`)
     } catch (e) {
-        res.render('error', { error: e })
+        res.render('error', { error: e,tfAuth:tfAuth, isAdmin:isAdmin })
     }
 
   });
