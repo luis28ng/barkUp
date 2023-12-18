@@ -1,10 +1,9 @@
-import xss from "xss";
 
 (function () {
   // Validation methods
   const validationMethods = {
     validateSearchText(searchText) {
-      searchText = xss(searchText);
+      searchText = filterXSS(searchText);
       if (typeof searchText !== "string")
         throw new Error("Input must be string");
       if (!searchText) throw new Error("Search text is required");
@@ -14,13 +13,13 @@ import xss from "xss";
         );
     },
     validateZipCode(zipCode) {
-      zipCode = xss(zipCode);
+      zipCode = filterXSS(zipCode);
       const zipCodeRegex = /^[0-9]{5}$/;
       if (zipCode && !zipCodeRegex.test(zipCode))
         throw new Error("Invalid zip code format");
     },
     validateType(type) {
-      type = xss(type);
+      type = filterXSS(type);
       if (!type) throw new Error("Type selection is required");
     },
   };

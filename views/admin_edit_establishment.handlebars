@@ -1,10 +1,10 @@
 <section>
   {{#if park}}
     <h2>Edit Park: {{park.parkName}}</h2>
-    <form action="/admin/editPark/{{park._id}}" method="post">
+    <form id="edit-establishment-form" action="/admin/editPark/{{park._id}}" method="post">
   {{else}}
     <h2>Edit Store: {{petStore.storeName}}</h2>
-    <form action="/admin/editStore/{{petStore._id}}" method="post">
+    <form id="edit-establishment-form" action="/admin/editStore/{{petStore._id}}" method="post">
   {{/if}}
 
   <label for="name">{{#if park}}Park{{else}}Store{{/if}} Name:</label>

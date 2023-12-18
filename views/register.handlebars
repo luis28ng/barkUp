@@ -51,14 +51,9 @@
   <button type="submit">Sign Up</button>
 </form>
 
-{{!-- {{#if errors}}
-  <section class="errors">
-    {{#each errors}}
-      <p>{{this}}</p>
-    {{/each}}
-  </section>
-{{/if}} --}}
-
 <div id="error" class="error">{{error}}</div>
 
 <p>Already have an account? <a href="/login">Click here to log-in</a></p>
+
+<script src="https://rawgit.com/leizongmin/js-xss/master/dist/xss.js"></script>
+<script src="../public/js/registration-csv.js"></script>

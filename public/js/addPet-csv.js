@@ -1,4 +1,5 @@
 
+
 (function () {
   // Validation methods
   const validationMethods = {
@@ -10,41 +11,31 @@
       if (name.length < 2 || name.length > 50)
         throw new Error("Name must be between 2 and 50 characters long.");
     },
-    validateZipCode(zipCode) {
-      zipCode = filterXSS(zipCode);
-      const zipCodeRegex = /^[0-9]{5}$/;
-      if (zipCode && !zipCodeRegex.test(zipCode))
-        throw new Error("Invalid zip code format");
-    },
     validateType(type) {
       type = filterXSS(type);
       if (!type) throw new Error("Type selection is required");
     },
   };
 
-  const adminPanelForm = document.getElementById("admin-search");
+  const addPetForm = document.getElementById("addPetForm");
 
-  if (adminPanelForm) {
-    const nameInput = document.getElementById("name");
-    const zipCodeInput = document.getElementById("zipCode");
-    const typeSelect = document.getElementById("type");
+  if (addPetForm) {
+    const petName = document.getElementById("petNameInput");
 
     let errorContainer = document.createElement("div");
     errorContainer.classList.add("errors", "hidden");
-    adminPanelForm.insertAdjacentElement("beforebegin", errorContainer);
+    addPetForm.insertAdjacentElement("beforebegin", errorContainer);
 
-    adminPanelForm.addEventListener("submit", (event) => {
+    addPetForm.addEventListener("submit", (event) => {
       event.preventDefault();
 
       errorContainer.classList.add("hidden");
       errorContainer.innerHTML = "";
 
       try {
-        validationMethods.validateName(nameInput.value);
-        validationMethods.validateZipCode(zipCodeInput.value);
-        validationMethods.validateType(typeSelect.value);
+        validationMethods.validateName(petName.value);
 
-        adminPanelForm.submit();
+        addPetForm.submit();
       } catch (e) {
         const errorMessage = document.createElement("p");
         errorMessage.textContent = e.message;

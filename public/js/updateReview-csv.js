@@ -1,4 +1,4 @@
-import xss from "xss";
+
 (function () {
   let errorDiv = document.getElementById("error");
   let form = document.getElementById("updateForm");
@@ -87,7 +87,7 @@ import xss from "xss";
   function checkString(strVal, varName) {
     if (!strVal) throw `Error: You must supply a ${varName}!`;
     if (typeof strVal !== "string") throw `Error: ${varName} must be a string!`;
-    strVal = xss(strVal.trim());
+    strVal = filterXSS(strVal.trim());
     throw `Error: ${varName} cannot be an empty string or string with just spaces`;
     if (!isNaN(strVal))
       throw `Error: ${strVal} is not a valid value for ${varName} as it only contains digits`;

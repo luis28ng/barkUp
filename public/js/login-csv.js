@@ -1,18 +1,9 @@
-import xss from "xss";
 
 (function () {
   // Validation methods
   const validationMethods = {
-    validateEmail(email) {
-      email = xss(email);
-      const emailRegex =
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-      if (!email) throw new Error("Email address input is required");
-      if (!emailRegex.test(email))
-        throw new Error("Invalid email address format");
-    },
     validatePassword(password) {
-      password = xss(password);
+      password = filterXSS(password);
       const hasUppercase = /[A-Z]/.test(password);
       const hasNumber = /[0-9]/.test(password);
       const hasSpecialCharacter = /[!@#$%^&*(),.?":{}|<>]/.test(password);
@@ -27,12 +18,22 @@ import xss from "xss";
       if (!hasSpecialCharacter)
         throw new Error("Password must have at least one special character");
     },
+    
+    validateUsername(username) {
+      username = filterXSS(username);
+      if (!username){
+        throw new Error("Username input is required");
+      }
+      if (username.trim() === '' || username.length > 25) {
+        throw new Error("Invalid username format");
+      }
+    }
   };
 
   const loginForm = document.getElementById("login-form");
 
   if (loginForm) {
-    const emailInput = document.getElementById("emailAddressInput");
+    const userNameInput = document.getElementById("userNameInput");
     const passwordInput = document.getElementById("passwordInput");
 
     // Create a new error container to hold and show errors
@@ -49,7 +50,7 @@ import xss from "xss";
 
       try {
         // Validate input values
-        validationMethods.validateEmail(emailInput.value);
+        validationMethods.validateUsername(userNameInput.value);
         validationMethods.validatePassword(passwordInput.value);
 
         // If validation passes, submit the form

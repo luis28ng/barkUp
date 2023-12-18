@@ -1,8 +1,7 @@
-import xss from "xss";
+
 (function reviewValidation() {
   const form = document.getElementById("review-form");
   let errorDiv = document.getElementById("error");
-  // let placeId = document.getElementById('placeId');
   let reviewTitle = document.getElementById("reviewTitle");
   let rating = document.getElementById("rating");
   let reviewDescription = document.getElementById("reviewDescription");
@@ -88,7 +87,7 @@ import xss from "xss";
   function checkString(strVal, varName) {
     if (!strVal) throw `Error: You must supply a ${varName}!`;
     if (typeof strVal !== "string") throw `Error: ${varName} must be a string!`;
-    strVal = xss(strVal.trim());
+    strVal = filterXSS(strVal.trim());
     if (strVal.length === 0)
       throw `Error: ${varName} cannot be an empty string or string with just spaces`;
     if (!isNaN(strVal))
