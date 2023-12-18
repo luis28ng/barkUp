@@ -7,6 +7,9 @@
       name = filterXSS(name);
       if (typeof name !== "string")
         throw new Error("Name input must be a string");
+      if(name.trim() === ''){
+        throw new Error("Name input cant be empty or just spaces");
+      }
       if (!name) throw new Error("Name input is required");
       if (name.length < 2 || name.length > 50)
         throw new Error("Name must be between 2 and 50 characters long.");
