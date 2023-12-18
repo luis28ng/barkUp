@@ -182,6 +182,7 @@ router
   .get(async (req, res) => {
     //code here for GET
     const tfAuth = !!req.session.user;
+    const isAdmin = req.session.user && req.session.user.role === "admin";
     return res.render("admin_panel", {tfAuth:tfAuth, isAdmin:isAdmin});
   })
   .post(async (req, res) => {
