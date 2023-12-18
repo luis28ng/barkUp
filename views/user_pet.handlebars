@@ -1,9 +1,10 @@
 {{#if (not deletionSuccess)}}
 {{#if (not updateSuccess)}}
 
-<p>{{petName}}</p>
-<p>{{petGender}}</p>
-<p>{{petBreed}}</p>
+<h1>Your pet:</h1>
+<p>Pet name: {{petName}}</p>
+<p>Pet Gender: {{petGender}}</p>
+<p>Breed: {{petBreed}}</p>
 
 <form action="/pet/{{petId}}" method="POST" id="deleteForm">
   <input type="hidden" name="_method" value="DELETE">
