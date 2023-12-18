@@ -69,7 +69,7 @@ let exportedMethods = {
     if (rating < 1 || rating > 5) {
       throw "Ratings can only be on a scale from 1 to 5.";
     }
-    rating = Math.round((rating + Number.EPSILON) * 100) / 100
+    rating = Math.round((rating) * 100) / 100
 
 
     if (!userId || userId === null || userId === undefined) {
@@ -278,7 +278,7 @@ let exportedMethods = {
     if (rating < 1 || rating > 5) {
       throw "Ratings can only be on a scale from 1 to 5.";
     }
-    rating = Math.round((rating + Number.EPSILON) * 100) / 100
+    rating = Math.round((rating) * 100) / 100
 
 
     if (!reviewId || reviewId === null || reviewId === undefined) {

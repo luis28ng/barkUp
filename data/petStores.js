@@ -407,7 +407,7 @@ let exportedMethods = {
     } else {
       newAvg =
         (currentRating * reviewArr.length + rating) / (reviewArr.length + 1);
-      newAvg = Math.round((newAvg + Number.EPSILON) * 100) / 100
+      newAvg = Math.round((newAvg ) * 100) / 100
     }
     reviewArr.push(reviewId);
     const updatedInfo = await storeCollection.findOneAndReplace(
@@ -454,7 +454,7 @@ let exportedMethods = {
     const reviewArr = currentStore.reviews;
     let newAvg = currentRating * reviewArr.length;
     newAvg = (newAvg + newRating - oldRating) / reviewArr.length;
-    newAvg = Math.round((newAvg + Number.EPSILON) * 100) / 100
+    newAvg = Math.round((newAvg ) * 100) / 100
     const updatedInfo = await storeCollection.findOneAndReplace(
       { _id: new ObjectId(id) },
       {
@@ -495,7 +495,7 @@ let exportedMethods = {
     const currentRating = currentStore.rating;
     const reviewArr = currentStore.reviews;
     let newAvg = currentRating * reviewArr.length;
-    newAvg = Math.round((newAvg + Number.EPSILON) * 100) / 100
+    newAvg = Math.round((newAvg ) * 100) / 100
     const newReviews = reviewArr.filter(function (x) {
       return x !== reviewId;
     });
