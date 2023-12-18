@@ -44,7 +44,12 @@ let exportedMethods = {
 
         const userCollection = await users();
 
-        const user = await userCollection.find({'pets._id': new ObjectId(petId)}).toArray();
+        let user = null;
+        try {
+            user = await userCollection.find({'pets._id': new ObjectId(petId)}).toArray();
+        } catch (e) {
+            console.log(e);
+        }
 
         if (!user) throw "Unable to find a user who owns that pet";
 

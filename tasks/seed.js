@@ -59,9 +59,13 @@ try {
 }
 
 let pet1 = null; 
+let pet2 = null;
+let pet3 = null;
 // Adding pets
 try {
-    pet1 = await pets.createPet(user1.insertedId.toString(), "Rocky", "Male", "German Shepard");
+    pet1 = await pets.createPet(user1.insertedId.toString(), "Rocky", "male", "german shepard");
+
+    pet2 = await pets.createPet(user2.insertedId.toString(), "Bubbles", "female", "poodle")
 } catch (e) {
     console.log(e);
 }

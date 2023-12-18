@@ -378,13 +378,15 @@ export const checkId = (id, varName) => {
 }
 
 export const validPet = (petName, petType, petBreed) => {
-  petName = petName.trim();
-  petType = petType.trim();
-  petBreed = petBreed.trim();
-
   if (!petName || !petType || !petBreed) throw "All pet information must be supplied";
 
   if (typeof petName !== 'string') throw "Pet name must be a string";
   if (typeof petType !== 'string') throw "Pet type must be a string";
   if (typeof petBreed !== 'string') throw "Pet breed must be a string";
+
+  petName = petName.trim();
+  petType = petType.trim();
+  petBreed = petBreed.trim();
+
+  if (!petName || !petType || !petBreed) throw "All pet information must be supplied";
 }
