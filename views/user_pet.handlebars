@@ -26,13 +26,16 @@
         <div>
             <label for="petGenderInput">Pet Type:</label>
             <select id="petGenderInput" name="petGenderInput" required>
+                <option value="">Select a Gender</option>
                 <option value="male">Male</option>
                 <option value="female">Female</option>
             </select>
         </div>
         <div>
             <label for="petBreedSelect">Pet Breed:</label>
-            <select id="petBreedSelect" name="petBreedSelect" required></select>
+            <select id="petBreedSelect" name="petBreedSelect" required>
+            <option value="">Select a Breed</option>
+            </select>
         </div>
         <button type="submit">Save</button>
     </form>
@@ -58,7 +61,6 @@
 {{/if}}
 
 <script src="https://rawgit.com/leizongmin/js-xss/master/dist/xss.js"></script>
-<script src="../public/js/addPet-csv.js"></script>
 <script src="../public/js/editPet-csv.js"></script>
 <script src="../public/js/dogBreeds.js"></script> <!-- Link to AJAX script -->
 
