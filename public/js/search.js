@@ -42,9 +42,17 @@
       errorContainer.innerHTML = "";
 
       try {
-        validationMethods.validateSearchText(searchTextInput.value);
-        validationMethods.validateZipCode(searchZipInput.value);
-        validationMethods.validateType(typeSelect.value);
+        if (searchTextInput.value) {
+          validationMethods.validateSearchText(searchTextInput.value);
+        };
+
+        if (searchZipInput.value) {
+          validationMethods.validateZipCode(searchZipInput.value);
+        };
+
+        if (typeSelect.value) {
+          validationMethods.validateType(typeSelect.value);
+        };
 
         searchForm.submit();
       } catch (e) {
