@@ -1,3 +1,4 @@
+<p>{{error}}</p>
 <section>
   {{#if addingPark}}
     <h2>Add New Park</h2>
@@ -14,10 +15,10 @@
     <fieldset>
       <legend>Operation Hours:</legend>
       <label for="openTime">Open Time:</label>
-      <input type="text" id="openTime" name="operationHours[open]" required />
+      <input type="text" id="openTime" name="operationHours[open]" required placeholder="eg: 8:00AM, 10:00PM"/>
 
       <label for="closeTime">Close Time:</label>
-      <input type="text" id="closeTime" name="operationHours[close]" required />
+      <input type="text" id="closeTime" name="operationHours[close]" required placeholder="eg: 8:00AM, 10:00PM"/>
     </fieldset>
   {{/unless}}
 
@@ -91,3 +92,5 @@
   <button type="submit">Add {{#if addingPark}}Park{{else}}Store{{/if}}</button>
   </form>
 </section>
+
+
